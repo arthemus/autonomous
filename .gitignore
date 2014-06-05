@@ -26,3 +26,13 @@ tenaz/.project
 tenaz/.settings/org.eclipse.core.resources.prefs
 tenaz/.settings/org.eclipse.jdt.core.prefs
 tenaz/.settings/org.eclipse.m2e.core.prefs
+faces/.settings/org.eclipse.wst.common.component
+faces/.settings/org.eclipse.wst.common.project.facet.core.xml
+functions/.settings/org.eclipse.wst.common.component
+functions/.settings/org.eclipse.wst.common.project.facet.core.xml
+ioc/.settings/org.eclipse.wst.common.component
+ioc/.settings/org.eclipse.wst.common.project.facet.core.xml
+printer/.settings/org.eclipse.wst.common.component
+printer/.settings/org.eclipse.wst.common.project.facet.core.xml
+tenaz/.settings/org.eclipse.wst.common.component
+tenaz/.settings/org.eclipse.wst.common.project.facet.core.xml
