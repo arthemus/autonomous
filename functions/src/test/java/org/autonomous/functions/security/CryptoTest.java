@@ -24,17 +24,13 @@ public class CryptoTest {
 			return _crypto.getPrivateKey();
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
-		} catch (InvalidKeyException e) {
-			// TODO Auto-generated catch block
+		} catch (InvalidKeyException e) {			
 			e.printStackTrace();
-		} catch (IllegalBlockSizeException e) {
-			// TODO Auto-generated catch block
+		} catch (IllegalBlockSizeException e) {			
 			e.printStackTrace();
-		} catch (BadPaddingException e) {
-			// TODO Auto-generated catch block
+		} catch (BadPaddingException e) {			
 			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
+		} catch (UnsupportedEncodingException e) {			
 			e.printStackTrace();
 		}
 		return null;
