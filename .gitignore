@@ -36,3 +36,8 @@ printer/.settings/org.eclipse.wst.common.component
 printer/.settings/org.eclipse.wst.common.project.facet.core.xml
 tenaz/.settings/org.eclipse.wst.common.component
 tenaz/.settings/org.eclipse.wst.common.project.facet.core.xml
+faces/.settings/org.eclipse.wst.validation.prefs
+functions/.settings/org.eclipse.wst.validation.prefs
+ioc/.settings/org.eclipse.wst.validation.prefs
+printer/.settings/org.eclipse.wst.validation.prefs
+tenaz/.settings/org.eclipse.wst.validation.prefs
