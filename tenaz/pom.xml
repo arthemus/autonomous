@@ -103,6 +103,7 @@
 		</dependency>
 
 		<!-- Driver para o Oracle -->
+		<!--
 		<dependency>
 			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc</artifactId>
@@ -110,6 +111,7 @@
 			<scope>system</scope>
 			<systemPath>${basedir}/lib/ojdbc6.jar</systemPath>
 		</dependency>
+		-->
 
 	</dependencies>
 
