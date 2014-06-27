@@ -11,13 +11,12 @@
 		<relativePath>../build/pom.xml</relativePath>
 	</parent>
 
-	<artifactId>autonomous.faces</artifactId>
+	<artifactId>autonomous.web</artifactId>
 	<packaging>jar</packaging>
-	<name>Implementacoes do Java Server Faces</name>
+	<name>Implementacoes Web</name>
 
 	<dependencies>
 
-		<!-- Dependencias internas -->
 		<dependency>
 			<groupId>org.autonomous</groupId>
 			<artifactId>autonomous.ioc</artifactId>
@@ -31,7 +30,6 @@
 			<scope>compile</scope>
 		</dependency>
 
-		<!-- Servlet -->
 		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-api</artifactId>
@@ -39,7 +37,6 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- Commons -->
 		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
@@ -54,7 +51,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>autonomous.faces</finalName>
+		<finalName>autonomous.web</finalName>
 	</build>
 
 </project>

@@ -14,13 +14,13 @@
 	<modules>
 		<module>../functions</module>
 		<module>../ioc</module>
-		<module>../tenaz</module>
-		<module>../faces</module>
+		<module>../tenaz</module>		
 		<module>../printer</module>
+		<module>../web</module>
 	</modules>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>		
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<repositories>
@@ -91,13 +91,15 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-compiler-plugin</artifactId>
+			    <version>3.1</version>			    
+			    <configuration>
+			    	<showDeprecation>true</showDeprecation>
+                	<showWarnings>true</showWarnings>
+			    	<source>1.7</source>
+			    	<target>1.7</target>			    	
+			    </configuration>
 			</plugin>
 		</plugins>
 	</build>

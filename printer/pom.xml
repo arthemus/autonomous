@@ -13,18 +13,16 @@
 
 	<artifactId>autonomous.printer</artifactId>
 	<packaging>jar</packaging>
-	<name>Relatorios e impressoes</name>
+	<name>Relatorios</name>
 
 	<dependencies>
 
-		<!-- Relatorios com Jasper -->
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
 			<version>4.7.1</version>
 		</dependency>
 
-		<!-- Servlet -->
 		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-api</artifactId>

@@ -41,3 +41,8 @@ functions/.settings/org.eclipse.wst.validation.prefs
 ioc/.settings/org.eclipse.wst.validation.prefs
 printer/.settings/org.eclipse.wst.validation.prefs
 tenaz/.settings/org.eclipse.wst.validation.prefs
+web/.classpath
+web/.project
+web/.settings/org.eclipse.core.resources.prefs
+web/.settings/org.eclipse.jdt.core.prefs
+web/.settings/org.eclipse.m2e.core.prefs
