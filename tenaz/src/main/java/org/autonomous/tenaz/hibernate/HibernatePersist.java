@@ -16,8 +16,9 @@ import org.autonomous.tenaz.core.PersistException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.impl.SessionImpl;
+import org.hibernate.internal.SessionImpl;
 
 /**
  * <pre>
@@ -89,7 +90,9 @@ public final class HibernatePersist implements Persist {
 			} catch (IOException e) {
 				_logger.info("Error: " + e.getMessage());
 			}			
-			factory = configuration.buildSessionFactory();
+			StandardServiceRegistryBuilder serviceRegistryBuilder = 
+					new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
+			factory = configuration.buildSessionFactory(serviceRegistryBuilder.build());
 		}
 	}
 
