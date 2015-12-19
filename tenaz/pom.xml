@@ -1,118 +1,118 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.autonomous</groupId>
-		<artifactId>autonomous</artifactId>
-		<version>1.0-SNAPSHOT</version>
-		<relativePath>../build/pom.xml</relativePath>
-	</parent>
+    <parent>
+        <groupId>org.autonomous</groupId>
+        <artifactId>autonomous</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../build/pom.xml</relativePath>
+    </parent>
 
-	<artifactId>autonomous.tenaz</artifactId>
-	<packaging>jar</packaging>
-	<name>Persistencia</name>
+    <artifactId>autonomous.tenaz</artifactId>
+    <packaging>jar</packaging>
+    <name>Persistencia</name>
 
-	<dependencies>
+    <dependencies>
 
-		<dependency>
-			<groupId>org.autonomous</groupId>
-			<artifactId>autonomous.functions</artifactId>
-			<version>1.0-SNAPSHOT</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.autonomous</groupId>
-			<artifactId>autonomous.ioc</artifactId>
-			<version>1.0-SNAPSHOT</version>
-			<scope>compile</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.autonomous</groupId>
+            <artifactId>autonomous.functions</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.autonomous</groupId>
+            <artifactId>autonomous.ioc</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-api</artifactId>
-			<version>6.0</version>
-			<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>6.0</version>
+            <scope>provided</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<version>3.6.10.Final</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-			<version>3.6.10.Final</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-c3p0</artifactId>
-			<version>3.6.10.Final</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-envers</artifactId>
-			<version>3.6.10.Final</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-validator</artifactId>
-			<version>4.2.0.Final</version>
-		</dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>3.6.10.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>3.6.10.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-c3p0</artifactId>
+            <version>3.6.10.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-envers</artifactId>
+            <version>3.6.10.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>4.2.0.Final</version>
+        </dependency>
 
-		<!-- Driver para o Firebird -->
-		<dependency>
-			<groupId>org.firebirdsql.jdbc</groupId>
-			<artifactId>jaybird-jdk16</artifactId>
-			<version>2.2.5</version>
-			<scope>runtime</scope>
-		</dependency>
+        <!-- Driver para o Firebird -->
+        <dependency>
+            <groupId>org.firebirdsql.jdbc</groupId>
+            <artifactId>jaybird-jdk16</artifactId>
+            <version>2.2.5</version>
+            <scope>runtime</scope>
+        </dependency>
 
-		<!-- Driver para o Microsoft SQL Server -->
-		<!-- Se for compilar o projeto no Java-6, utilizar a versão 1.2.8 do Driver -->
-		<dependency>
-			<groupId>net.sourceforge.jtds</groupId>
-			<artifactId>jtds</artifactId>
-			<version>1.3.1</version>
-			<scope>runtime</scope>
-		</dependency>
+        <!-- Driver para o Microsoft SQL Server -->
+        <!-- Se for compilar o projeto no Java-6, utilizar a versão 1.2.8 do Driver -->
+        <dependency>
+            <groupId>net.sourceforge.jtds</groupId>
+            <artifactId>jtds</artifactId>
+            <version>1.3.1</version>
+            <scope>runtime</scope>
+        </dependency>
 
-		<!-- Driver para o MySQL -->
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.31</version>
-			<scope>runtime</scope>
-		</dependency>
+        <!-- Driver para o MySQL -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.31</version>
+            <scope>runtime</scope>
+        </dependency>
 
-		<!-- Driver para o HSQLDB -->
-		<dependency>
-			<groupId>org.hsqldb</groupId>
-			<artifactId>hsqldb</artifactId>
-			<version>2.3.2</version>
-			<scope>runtime</scope>
-		</dependency>
+        <!-- Driver para o HSQLDB -->
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>2.3.2</version>
+            <scope>runtime</scope>
+        </dependency>
 
-		<!-- Driver para o PostgreSQL -->
-		<dependency>
-			<groupId>postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>9.1-901.jdbc4</version>
-			<scope>runtime</scope>
-		</dependency>
+        <!-- Driver para o PostgreSQL -->
+        <dependency>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>9.1-901.jdbc4</version>
+            <scope>runtime</scope>
+        </dependency>
 
-		<!-- Driver local para o Oracle -->
-		<!-- <dependency> <groupId>com.oracle</groupId> <artifactId>ojdbc</artifactId> 
-			<version>11.2.0.4</version> <scope>system</scope> <systemPath>${basedir}/lib/ojdbc6.jar</systemPath> 
-			</dependency> -->
+        <!-- Driver local para o Oracle -->
+        <!-- <dependency> <groupId>com.oracle</groupId> <artifactId>ojdbc</artifactId>
+            <version>11.2.0.4</version> <scope>system</scope> <systemPath>${basedir}/lib/ojdbc6.jar</systemPath>
+            </dependency> -->
 
-	</dependencies>
+    </dependencies>
 
-	<build>
-		<finalName>autonomous.tenaz</finalName>
-	</build>
+    <build>
+        <finalName>autonomous.tenaz</finalName>
+    </build>
 
 </project>

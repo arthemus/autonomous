@@ -46,3 +46,5 @@ web/.project
 web/.settings/org.eclipse.core.resources.prefs
 web/.settings/org.eclipse.jdt.core.prefs
 web/.settings/org.eclipse.m2e.core.prefs
+*.iml
+build/.idea/

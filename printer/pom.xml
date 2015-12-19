@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.autonomous</groupId>
-		<artifactId>autonomous</artifactId>
-		<version>1.0-SNAPSHOT</version>
-		<relativePath>../build/pom.xml</relativePath>
-	</parent>
+    <parent>
+        <groupId>org.autonomous</groupId>
+        <artifactId>autonomous</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../build/pom.xml</relativePath>
+    </parent>
 
-	<artifactId>autonomous.printer</artifactId>
-	<packaging>jar</packaging>
-	<name>Relatorios</name>
+    <artifactId>autonomous.printer</artifactId>
+    <packaging>jar</packaging>
+    <name>Relatorios</name>
 
-	<dependencies>
+    <dependencies>
 
-		<dependency>
-			<groupId>net.sf.jasperreports</groupId>
-			<artifactId>jasperreports</artifactId>
-			<version>4.7.1</version>
-		</dependency>
+        <dependency>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports</artifactId>
+            <version>4.7.1</version>
+        </dependency>
 
-		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-api</artifactId>
-			<version>6.0</version>
-			<scope>provided</scope>			
-		</dependency>		
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>6.0</version>
+            <scope>provided</scope>
+        </dependency>
 
-	</dependencies>
+    </dependencies>
 
-	<build>
-		<finalName>autonomous.printer</finalName>
-	</build>
+    <build>
+        <finalName>autonomous.printer</finalName>
+    </build>
 
 </project>

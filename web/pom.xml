@@ -1,57 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.autonomous</groupId>
-		<artifactId>autonomous</artifactId>
-		<version>1.0-SNAPSHOT</version>
-		<relativePath>../build/pom.xml</relativePath>
-	</parent>
+    <parent>
+        <groupId>org.autonomous</groupId>
+        <artifactId>autonomous</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../build/pom.xml</relativePath>
+    </parent>
 
-	<artifactId>autonomous.web</artifactId>
-	<packaging>jar</packaging>
-	<name>Implementacoes Web</name>
+    <artifactId>autonomous.web</artifactId>
+    <packaging>jar</packaging>
+    <name>Implementacoes Web</name>
 
-	<dependencies>
+    <dependencies>
 
-		<dependency>
-			<groupId>org.autonomous</groupId>
-			<artifactId>autonomous.ioc</artifactId>
-			<version>1.0-SNAPSHOT</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.autonomous</groupId>
-			<artifactId>autonomous.functions</artifactId>
-			<version>1.0-SNAPSHOT</version>
-			<scope>compile</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.autonomous</groupId>
+            <artifactId>autonomous.ioc</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.autonomous</groupId>
+            <artifactId>autonomous.functions</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-api</artifactId>
-			<version>6.0</version>
-			<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>6.0</version>
+            <scope>provided</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>commons-fileupload</groupId>
-			<artifactId>commons-fileupload</artifactId>
-			<version>1.3</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.4</version>
-		</dependency>
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>1.3</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
+        </dependency>
 
-	</dependencies>
+    </dependencies>
 
-	<build>
-		<finalName>autonomous.web</finalName>
-	</build>
+    <build>
+        <finalName>autonomous.web</finalName>
+    </build>
 
 </project>

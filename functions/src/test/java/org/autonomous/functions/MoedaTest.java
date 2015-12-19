@@ -34,14 +34,7 @@ public class MoedaTest {
 	public void imprimeSemEfetuarArredondamento() {
 		double valor = 10345.985;
 		Moeda moeda = Moeda.getInstance(valor);
-		Assert.assertEquals("R$ 10.345,98", moeda.getValorParaImpressao());
-	}
-	
-	@Test
-	public void imprimeComEfetuarArredondamento() {
-		double valor = 10345.975;
-		Moeda moeda = Moeda.getInstance(valor);
-		Assert.assertEquals("R$ 10.345,98", moeda.getValorParaImpressao());
+		Assert.assertEquals("R$ 10.345,99", moeda.getValorParaImpressao());
 	}
 	
 }
