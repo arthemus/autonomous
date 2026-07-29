@@ -11,47 +11,27 @@ import org.hibernate.Session;
 import com.google.inject.Inject;
 
 /**
- * 
+ *
  * @author arthemus
  * @since 06/09/2013
  * @param <T>
+ *            The result type of the search.
  */
 public class SQLHibernateSearch implements HibernateSearch {
 
-	private final Session _session;
-	
-	@Inject
-	public SQLHibernateSearch(Session _session) {	
-		this._session = _session;
-	}
+	private final Session session;
 
-	@Override	
-	public <T> T getUniqueResult(final String query, final Map<String, Object> params) 
-			throws PersistException {		
-		T object = null;				
-		try {
-			Query hiQuery = _session.createSQLQuery(query);
-			if (params != null) {
-				for (Entry<String, Object> item : params.entrySet()) {
-					hiQuery.setParameter(item.getKey(), item.getValue());
-				}
-			}	
-			@SuppressWarnings("unchecked")
-			List<T> temp = hiQuery.list();
-			if (temp != null && !temp.isEmpty())
-				object = temp.get(0);
-		} catch (Exception e) {
-			throw new PersistException("Problemas durante a pesquisa: " + e.getMessage());
-		}
-		return object;
+	@Inject
+	public SQLHibernateSearch(Session session) {
+		this.session = session;
 	}
 
 	@Override
-	public <T> List<T> getList(final String query, final Map<String, Object> params) 
-			throws PersistException {		
-		List<T> list = null;				
+	public <T> T getUniqueResult(final String query, final Map<String, Object> params)
+			throws PersistException {
+		T object = null;
 		try {
-			Query hiQuery = _session.createSQLQuery(query);
+			Query hiQuery = session.createSQLQuery(query);
 			if (params != null) {
 				for (Entry<String, Object> item : params.entrySet()) {
 					hiQuery.setParameter(item.getKey(), item.getValue());
@@ -59,10 +39,37 @@ public class SQLHibernateSearch implements HibernateSearch {
 			}
 			@SuppressWarnings("unchecked")
 			List<T> temp = hiQuery.list();
-			if (temp != null)
-				list = temp;
+			if (temp != null && !temp.isEmpty()) {
+				object = temp.get(0);
+			}
 		} catch (Exception e) {
-			throw new PersistException("Problemas durante a pesquisa: " + e.getMessage());
+			PersistException persistException = new PersistException("Problems during the search: " + e.getMessage());
+			persistException.initCause(e);
+			throw persistException;
+		}
+		return object;
+	}
+
+	@Override
+	public <T> List<T> getList(final String query, final Map<String, Object> params)
+			throws PersistException {
+		List<T> list = null;
+		try {
+			Query hiQuery = session.createSQLQuery(query);
+			if (params != null) {
+				for (Entry<String, Object> item : params.entrySet()) {
+					hiQuery.setParameter(item.getKey(), item.getValue());
+				}
+			}
+			@SuppressWarnings("unchecked")
+			List<T> temp = hiQuery.list();
+			if (temp != null) {
+				list = temp;
+			}
+		} catch (Exception e) {
+			PersistException persistException = new PersistException("Problems during the search: " + e.getMessage());
+			persistException.initCause(e);
+			throw persistException;
 		}
 		return list;
 	}

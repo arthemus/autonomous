@@ -14,28 +14,34 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.apache.xerces.impl.dv.util.Base64;
+import org.apache.commons.codec.binary.Base64;
 
 /**
- * Classe desenvolvida para ser utilizada na criptografia dos dados do ERP referente a controle de
- * licenças.
- * 
- * @author Walter Portugal
+ * Class designed to be used for encrypting ERP data related to license
+ * control.
  *
+ * @author Walter Portugal
  */
 
 public class Crypto {
-	
-	private Cipher _cipher;
-	private final String deadBeef = "deadbeefs0ftland";
-	
-	public Crypto() throws CryptoException{
-		Initilize();
+
+	private Cipher cipher;
+
+	/**
+	 * Hardcoded key seed used for wrapping/unwrapping private keys.
+	 * This is a legacy value ("deadbeefs0ftland") retained for backward
+	 * compatibility with existing encrypted data. It should ideally be
+	 * externalized to a configuration source in a future refactoring.
+	 */
+	private final String wrapKeySeed = "deadbeefs0ftland";
+
+	public Crypto() throws CryptoException {
+		initialize();
 	}
 
-	private final void Initilize() throws CryptoException {
+	private final void initialize() throws CryptoException {
 		try {
-			_cipher = getCipher();
+			cipher = getCipher();
 		} catch (NoSuchAlgorithmException e) {
 			throw new CryptoException(e);
 		} catch (NoSuchProviderException e) {
@@ -51,81 +57,83 @@ public class Crypto {
 	}
 
 	@SuppressWarnings("unused")
-	private Key getStringToSecretKey(String secretKey){
-		byte[] encodeKey = Base64.decode(secretKey);		
+	private Key getStringToSecretKey(String secretKey) {
+		byte[] encodeKey = Base64.decodeBase64(secretKey);
 		return new SecretKeySpec(encodeKey, "AES");
 	}
-	
-	private byte[] wrapPrivateKey(Key key) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException, 
-					UnsupportedEncodingException{
-		
-		byte[] bytesDeadBeef = deadBeef.getBytes("UTF8");
-		
-		_cipher.init(Cipher.WRAP_MODE, new SecretKeySpec(bytesDeadBeef, "AES"));
-		
-		return _cipher.wrap(key);
+
+	private byte[] wrapPrivateKey(Key key) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException,
+					UnsupportedEncodingException {
+
+		byte[] bytesWrapKeySeed = wrapKeySeed.getBytes("UTF8");
+
+		cipher.init(Cipher.WRAP_MODE, new SecretKeySpec(bytesWrapKeySeed, "AES"));
+
+		return cipher.wrap(key);
 	}
-	
-	private Key unwrapPrivateKey(byte[] privateKey) throws UnsupportedEncodingException, InvalidKeyException, 
-					NoSuchAlgorithmException{
-		byte[] bytesDeadBeef = deadBeef.getBytes("UTF8");
-		
-		_cipher.init(Cipher.UNWRAP_MODE, new SecretKeySpec(bytesDeadBeef, "AES"));
-		
-		return _cipher.unwrap(privateKey, "AES", Cipher.SECRET_KEY);
+
+	private Key unwrapPrivateKey(byte[] privateKey) throws UnsupportedEncodingException, InvalidKeyException,
+					NoSuchAlgorithmException {
+		byte[] bytesWrapKeySeed = wrapKeySeed.getBytes("UTF8");
+
+		cipher.init(Cipher.UNWRAP_MODE, new SecretKeySpec(bytesWrapKeySeed, "AES"));
+
+		return cipher.unwrap(privateKey, "AES", Cipher.SECRET_KEY);
 	}
-	
+
 	/**
-	 * Método a ser utilizado para gerar a chave privada do cliente. Essa chave deverá ser armazenada
-	 * e utilizada para criptografia das outras informações. É gerada apenas no cadastro do cliente.
-	 * 
-	 * @return
+	 * Method to be used to generate the client's private key. This key should
+	 * be stored and used to encrypt other information. It is generated only
+	 * during client registration.
+	 *
+	 * @return The generated private key as a Base64-encoded string.
 	 * @throws NoSuchAlgorithmException
-	 * @throws BadPaddingException 
-	 * @throws IllegalBlockSizeException 
-	 * @throws InvalidKeyException 
-	 * @throws UnsupportedEncodingException 
+	 * @throws BadPaddingException
+	 * @throws IllegalBlockSizeException
+	 * @throws InvalidKeyException
+	 * @throws UnsupportedEncodingException
 	 */
-	
-	public String getPrivateKey() throws NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, 
-					BadPaddingException, UnsupportedEncodingException{
-		
-		KeyGenerator generator = KeyGenerator.getInstance("AES");		
-		
+
+	public String getPrivateKey() throws NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException,
+					BadPaddingException, UnsupportedEncodingException {
+
+		KeyGenerator generator = KeyGenerator.getInstance("AES");
+
 		generator.init(new SecureRandom());
-		
-		Key key = generator.generateKey();	
-		
-		//Retorna a chave ofuscando seu real valor através do wrapkey.
-		return Base64.encode(wrapPrivateKey(key));
+
+		Key key = generator.generateKey();
+
+		// Returns the key, obfuscating its real value through key wrapping.
+		return Base64.encodeBase64String(wrapPrivateKey(key));
 	}
-	
+
 	/**
-	 * A partir de uma chave privada, que deve ser gerada pelo método getPrivateKey, esse método
-	 * criptografa uma string qualquer - Criptografia AES.
-	 * 
-	 * 
+	 * Given a private key that must be generated by the getPrivateKey method,
+	 * this method encrypts any string - AES encryption.
+	 *
 	 * @param privateKey
+	 *            The Base64-encoded private key.
 	 * @param message
-	 * @return
-	 * @throws CryptoException 
-	 * 
+	 *            The message to encrypt.
+	 * @return The encrypted string.
+	 * @throws CryptoException
+	 *
 	 * @see getPrivateKey()
 	 */
-	
-	public String doEncript(String privateKey, String message) throws CryptoException {
-		
+
+	public String doEncrypt(String privateKey, String message) throws CryptoException {
+
 		try {
-			Key key = unwrapPrivateKey(Base64.decode(privateKey));	
-			
-			_cipher.init(Cipher.ENCRYPT_MODE, key);
-			
+			Key key = unwrapPrivateKey(Base64.decodeBase64(privateKey));
+
+			cipher.init(Cipher.ENCRYPT_MODE, key);
+
 			byte[] messageBytes = message.getBytes("UTF8");
-			
-			byte[] raw = _cipher.doFinal(messageBytes);
-			
-			return Base64.encode(raw);
-			
+
+			byte[] raw = cipher.doFinal(messageBytes);
+
+			return Base64.encodeBase64String(raw);
+
 		} catch (InvalidKeyException e) {
 			throw new CryptoException(e);
 		} catch (UnsupportedEncodingException e) {
@@ -138,33 +146,36 @@ public class Crypto {
 			throw new CryptoException(e);
 		}
 	}
-	
+
 	/**
-	 * Esse método descriptografa uma mensagem criptografada com o médoto doEncrypt. É importante observar que a
-	 * mesma chave usada para criptografar obtida a partir do médoto getPrivateKey deve ser usada para a descriptografia. 
-	 * 
+	 * This method decrypts a message encrypted with the doEncrypt method.
+	 * It is important to note that the same key used for encryption, obtained
+	 * from the getPrivateKey method, must be used for decryption.
+	 *
 	 * @param privateKey
-	 * @param strEncript
-	 * @return
-	 * @throws CryptoException 
-	 * 
-	 * @see doEncript, getPrivateKey
-	 */	
-	public String doDecript(String privateKey, String strEncript) throws CryptoException{
-		
-		String strDecript = null;
-		
+	 *            The Base64-encoded private key.
+	 * @param strEncrypted
+	 *            The encrypted message to decrypt.
+	 * @return The decrypted string.
+	 * @throws CryptoException
+	 *
+	 * @see doEncrypt, getPrivateKey
+	 */
+	public String doDecrypt(String privateKey, String strEncrypted) throws CryptoException {
+
+		String strDecrypted = null;
+
 		try {
-			
-			Key key = unwrapPrivateKey(Base64.decode(privateKey));	
-			
-			_cipher.init(Cipher.DECRYPT_MODE, key);
-			
-			byte[] raw = Base64.decode(strEncript);
-			byte[] stringBytes = _cipher.doFinal(raw);
-					
-			strDecript = new String(stringBytes, "UTF8");
-			
+
+			Key key = unwrapPrivateKey(Base64.decodeBase64(privateKey));
+
+			cipher.init(Cipher.DECRYPT_MODE, key);
+
+			byte[] raw = Base64.decodeBase64(strEncrypted);
+			byte[] stringBytes = cipher.doFinal(raw);
+
+			strDecrypted = new String(stringBytes, "UTF8");
+
 		} catch (InvalidKeyException e) {
 			throw new CryptoException(e);
 		} catch (IllegalBlockSizeException e) {
@@ -177,6 +188,6 @@ public class Crypto {
 			throw new CryptoException(e);
 		}
 
-		return strDecript;
-	}	
+		return strDecrypted;
+	}
 }

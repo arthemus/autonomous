@@ -7,9 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 import com.google.inject.Provider;
 
 /**
- * Fornece uma implementação de HttpServletRequest, 
- * já adequado para trabalhar com o Injector do Google Guice. 
- * 
+ * Provides an HttpServletRequest implementation,
+ * suitable for working with the Google Guice Injector.
+ *
  * @author arthemus
  * @since 25/03/2013
  *

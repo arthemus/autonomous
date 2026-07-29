@@ -8,9 +8,9 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
 /**
- * Conversor genérico para utilização de entidades da JPA em componentes 
- * JSF como combobox e seletores.
- * 
+ * Generic converter for using JPA entities in JSF components
+ * such as comboboxes and selectors.
+ *
  * @author arthemus
  * @since 16/05/2013
  */

@@ -6,47 +6,47 @@ import org.junit.Test;
 
 public class CryptoObjectTest {
 
-	public class Dados{
-		
-		private int codigo;
-		private String nome;		
-		private double salario;
-		
-		public int getCodigo() {
-			return codigo;
+	public class Data{
+
+		private int code;
+		private String name;
+		private double salary;
+
+		public int getCode() {
+			return code;
 		}
-		public void setCodigo(int codigo) {
-			this.codigo = codigo;
+		public void setCode(int code) {
+			this.code = code;
 		}
-		public String getNome() {
-			return nome;
+		public String getName() {
+			return name;
 		}
-		public void setNome(String nome) {
-			this.nome = nome;
+		public void setName(String name) {
+			this.name = name;
 		}
-		public double getSalario() {
-			return salario;
+		public double getSalary() {
+			return salary;
 		}
-		public void setSalario(double salario) {
-			this.salario = salario;
+		public void setSalary(double salary) {
+			this.salary = salary;
 		}
 		private CryptoObjectTest getOuterType() {
 			return CryptoObjectTest.this;
 		}
-		
+
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
 			result = prime * result + getOuterType().hashCode();
-			result = prime * result + codigo;
-			result = prime * result + ((nome == null) ? 0 : nome.hashCode());
+			result = prime * result + code;
+			result = prime * result + ((name == null) ? 0 : name.hashCode());
 			long temp;
-			temp = Double.doubleToLongBits(salario);
+			temp = Double.doubleToLongBits(salary);
 			result = prime * result + (int) (temp ^ (temp >>> 32));
 			return result;
 		}
-		
+
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj)
@@ -55,45 +55,47 @@ public class CryptoObjectTest {
 				return false;
 			if (getClass() != obj.getClass())
 				return false;
-			Dados other = (Dados) obj;
-			if (codigo != other.codigo)
+			Data other = (Data) obj;
+			if (code != other.code)
 				return false;
-			if (nome == null) {
-				if (other.nome != null)
+			if (name == null) {
+				if (other.name != null)
 					return false;
-			} else if (!nome.equals(other.nome))
+			} else if (!name.equals(other.name))
 				return false;
-			if (Double.doubleToLongBits(salario) != Double
-					.doubleToLongBits(other.salario))
+			if (Double.doubleToLongBits(salary) != Double
+					.doubleToLongBits(other.salary))
 				return false;
 			return true;
 		}
 	}
-	
-	private Dados _dados;
-	
+
+	private Data _data;
+
 	@Before
-	public void SetUp(){
-		_dados = new Dados();
-		
-		_dados.setCodigo(1);
-		_dados.setNome("Arthur Luiz");
-		_dados.setSalario(100000);
+	public void setUp(){
+		_data = new Data();
+
+		_data.setCode(1);
+		_data.setName("Arthur Luiz");
+		_data.setSalary(100000);
 	}
-	
-	
+
+
 	@Test
-	public void testCryptObject() throws Exception {
-		CryptoObject<Dados> crypt = new CryptoObject<CryptoObjectTest.Dados>("f9ZB44Vyy02UOi1q8pAGfA==");
-		
+	public void shouldEncryptAndDecryptObject() throws Exception {
+		Crypto crypto = new Crypto();
+		String freshKey = crypto.getPrivateKey();
+		CryptoObject<Data> crypt = new CryptoObject<CryptoObjectTest.Data>(freshKey);
+
 		try {
-			String strEncrypt = crypt.doEncrypt(_dados);
-			
-			Dados dadosDecrypted = crypt.doDecript(strEncrypt, Dados.class);
-			
-			Assert.assertTrue(_dados.equals(dadosDecrypted));
+			String encrypted = crypt.doEncrypt(_data);
+
+			Data decrypted = crypt.doDecrypt(encrypted, Data.class);
+
+			Assert.assertTrue(_data.equals(decrypted));
 		} catch (CryptoException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 }

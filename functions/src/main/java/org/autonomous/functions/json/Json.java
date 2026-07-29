@@ -5,8 +5,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 /**
- * Classe utilitária para tratar arquivos JSON.
- * 
+ * Utility class for handling JSON files.
+ *
  * @author arthemus
  * @since 03/10/2013
  */
@@ -21,16 +21,17 @@ public final class Json {
 	}
 
 	/**
-	 * Obtem uma nova instancia da classe Json
-	 * 
-	 * @param stringJson
-	 * @return
-	 * @throws Exception
+	 * Obtains a new instance of the Json class.
+	 *
+	 * @param jsonString
+	 *            The JSON string to parse.
+	 * @return A new Json instance.
+	 * @throws JsonFormatException
 	 */
-	public static final Json getInstance(final String stringJson)
+	public static final Json getInstance(final String jsonString)
 			throws JsonFormatException {
-		try {		
-			String jsonValid = getJsonValid(stringJson.replaceAll("[\"']", ""));
+		try {
+			String jsonValid = getJsonValid(jsonString.replaceAll("[\"']", ""));
 			JsonElement element = new JsonParser().parse(jsonValid);
 			if (element.isJsonObject())
 				return new Json((JsonObject) element, jsonValid);
@@ -40,13 +41,14 @@ public final class Json {
 			throw new JsonFormatException(e.getMessage());
 		}
 	}
-	
+
 	/**
-	 * Obtem uma nova String json já validada.
-	 * No caso, adiciona aspas em cada nó do arquivo original.
-	 * 
+	 * Obtains a new validated JSON string. In this case, adds quotes to
+	 * each node of the original file.
+	 *
 	 * @param json
-	 * @return
+	 *            The raw JSON string.
+	 * @return The validated JSON string.
 	 */
 	public static final String getJsonValid(final String json) {
 		String jsonTemp = json.replaceAll("[{}]", "");
@@ -60,15 +62,16 @@ public final class Json {
 			} else if (count + 1 < nodes.length) {
 				builder.append(",");
 			}
-		} 
+		}
 		return "{".concat(builder.toString().trim()).concat("}").trim();
 	}
 
 	/**
-	 * Obtem o valor de um elemento do arquivo json.
-	 * 
+	 * Obtains the value of an element from the JSON file.
+	 *
 	 * @param nodeName
-	 * @return
+	 *            The name of the node to retrieve.
+	 * @return The value of the element as a string.
 	 */
 	public final String getElement(final String nodeName) {
 		JsonElement element = jsonObject.get(nodeName);
@@ -81,6 +84,6 @@ public final class Json {
 	@Override
 	public String toString() {
 		return new String(jsonString);
-	}	
-	
+	}
+
 }

@@ -3,10 +3,11 @@ package org.autonomous.functions.security;
 import com.google.gson.Gson;
 
 /**
- * Essa classe contempla a criptografia de objetos inteiros. Para a criptografia é feito, inicialmente, a serialização
- * do objeto para JSON e posteriormente a criptografia das informações. Ao descriptografar a mensagem, o sistema também
- * desserializa o JSON convertendo ao respectivo objeto.
- * 
+ * This class handles the encryption of entire objects. For encryption, the
+ * object is first serialized to JSON and then the information is encrypted.
+ * When decrypting the message, the system also deserializes the JSON,
+ * converting it back to the respective object.
+ *
  * @author Walter Portugal
  *
  * @param <T>
@@ -15,44 +16,48 @@ import com.google.gson.Gson;
 
 public class CryptoObject<T> {
 
-	private final Crypto _crypto;
-	private final String _privateKey;
-	
-	public CryptoObject(String privateKey) throws CryptoException{
-		_crypto = new Crypto();
-		_privateKey = privateKey;
+	private final Crypto crypto;
+	private final String privateKey;
+
+	public CryptoObject(String privateKey) throws CryptoException {
+		crypto = new Crypto();
+		this.privateKey = privateKey;
 	}
-	
+
 	/**
-	 * Retorna uma string criptografada referente ao objeto passado como parâmetro.
-	 * 
+	 * Returns an encrypted string representing the object passed as a
+	 * parameter.
+	 *
 	 * @param object
-	 * @return
-	 * @throws CryptoException 
-	 */	
-	public String doEncrypt(final T object) throws CryptoException{
-		
+	 *            The object to encrypt.
+	 * @return The encrypted string.
+	 * @throws CryptoException
+	 */
+	public String doEncrypt(final T object) throws CryptoException {
+
 		Gson gson = new Gson();
 		String strObjectJson = gson.toJson(object);
-		
-		return _crypto.doEncript(_privateKey, strObjectJson);
+
+		return crypto.doEncrypt(privateKey, strObjectJson);
 	}
-	
+
 	/**
-	 * Descriptografa em um objeto uma string.
-	 * 
+	 * Decrypts a string into an object.
+	 *
 	 * @param strEncrypted
+	 *            The encrypted string to decrypt.
 	 * @param classReference
-	 * @return
-	 * @throws CryptoException 
+	 *            The class to deserialize into.
+	 * @return The decrypted object.
+	 * @throws CryptoException
 	 */
-	public T doDecript(String strEncrypted, Class<T> classReference) throws CryptoException{
-		
-		try{
-			String strJson = _crypto.doDecript(_privateKey, strEncrypted);
-			
+	public T doDecrypt(String strEncrypted, Class<T> classReference) throws CryptoException {
+
+		try {
+			String strJson = crypto.doDecrypt(privateKey, strEncrypted);
+
 			Gson gson = new Gson();
-			
+
 			return gson.fromJson(strJson, classReference);
 		} catch (Exception e) {
 			throw new CryptoException(e);

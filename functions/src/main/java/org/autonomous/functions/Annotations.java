@@ -6,8 +6,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * Classe utilitária para obter informações de uma determinada Annotation.
- * 
+ * Utility class to obtain information from a given annotation.
+ *
  * @author arthemus
  * @since 30/08/2013
  */
@@ -27,10 +27,11 @@ public class Annotations {
 	}
 
 	/**
-	 * Define o objeto que terá suas annotations analisadas.
-	 * 
+	 * Defines the object whose annotations will be analyzed.
+	 *
 	 * @param object
-	 * @return
+	 *            The object to analyze.
+	 * @return An Annotations instance.
 	 */
 	public static Annotations onObject(Object object) {
 		return new Annotations(object);
@@ -41,16 +42,17 @@ public class Annotations {
 	}
 
 	/**
-	 * O nome do atributo que deve ser analisado.
-	 * 
+	 * The name of the attribute to be analyzed.
+	 *
 	 * Ex.
-	 * 
-	 * @Column(name = "NOME_CLIENTE") private String nomeDoCliente;
-	 * 
-	 *              fieldName = nomeDoCliente;
-	 * 
+	 *
+	 * @Column(name = "NOME_CLIENTE") private String customerName;
+	 *
+	 *              fieldName = customerName;
+	 *
 	 * @param fieldName
-	 * @return
+	 *            The name of the field to find.
+	 * @return This Annotations instance for chaining.
 	 */
 	public Annotations forAttribute(String fieldName) {
 		fieldClass = null;
@@ -63,16 +65,17 @@ public class Annotations {
 				continue;
 		}
 		if (fieldClass == null)
-			throw new RuntimeException("O atributo " + fieldName
-					+ " não foi encontrado");
+			throw new RuntimeException("The attribute " + fieldName
+					+ " was not found");
 		return this;
 	}
 
 	/**
-	 * Qual annotation deve ser analisada.
-	 * 
+	 * Which annotation should be analyzed.
+	 *
 	 * @param annotationClass
-	 * @return
+	 *            The annotation class to look for.
+	 * @return This Annotations instance for chaining.
 	 */
 	public Annotations forAnnotation(Class<? extends Annotation> annotationClass) {
 		this.annotation = fieldClass.getAnnotation(annotationClass);
@@ -80,17 +83,19 @@ public class Annotations {
 	}
 
 	/**
-	 * Obtem o valor de um determinado atributo da anotação em sí.
-	 * 
+	 * Obtains the value of a given attribute of the annotation itself.
+	 *
 	 * Ex.
-	 * 
-	 * @Column(name = "NOME_CLIENTE", lenght = 15)
-	 * 
+	 *
+	 * @Column(name = "NOME_CLIENTE", length = 15)
+	 *
 	 *              paramName = length paramType = Integer.class
-	 * 
+	 *
 	 * @param paramName
+	 *            The name of the annotation parameter.
 	 * @param paramType
-	 * @return
+	 *            The expected type of the parameter.
+	 * @return The value of the annotation parameter.
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T getValue(String paramName, Class<T> paramType) {
@@ -105,17 +110,17 @@ public class Annotations {
 				}
 			}
 		} catch (IllegalArgumentException e) {
-			throw new RuntimeException("O paramêtro não pode ser encontrado: "
+			throw new RuntimeException("The parameter could not be found: "
 					+ e.getMessage());
 		} catch (IllegalAccessException e) {
-			throw new RuntimeException("O paramêtro não pode ser acessado: "
+			throw new RuntimeException("The parameter could not be accessed: "
 					+ e.getMessage());
 		} catch (SecurityException e) {
 			throw new RuntimeException(
-					"Problemas de segurança para acessar o paramêtro: "
+					"Security problem accessing the parameter: "
 							+ e.getMessage());
 		} catch (InvocationTargetException e) {
-			throw new RuntimeException("Problemas para acessar o paramêtro "
+			throw new RuntimeException("Problem accessing the parameter "
 					+ paramName + ": " + e.getMessage());
 		}
 		return result;

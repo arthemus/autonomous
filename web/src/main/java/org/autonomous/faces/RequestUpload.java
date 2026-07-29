@@ -8,31 +8,35 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Para obter arquivos enviados via Upload de páginas Web.
- * 
+ * To obtain files sent via upload from web pages.
+ *
  * @author arthemus
  * @since 21/05/2014
  *
  */
 public class RequestUpload {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(RequestUpload.class);
+
 	private static final int THRESHOLD_SIZE = 1024 * 1024 * 3; // 3MB
 	private static final int MAX_FILE_SIZE = 1024 * 1024 * 40; // 40MB
 	private static final int REQUEST_SIZE = 1024 * 1024 * 50; // 50MB
-	
+
 	private final String _filePath;
 	private final HttpServletRequest _request;
-	
+
 	public RequestUpload(HttpServletRequest request) {
 		_request = request;
 		_filePath = this.getClass().getClassLoader().getResource("../../").getFile();
 	}
 
 	/**
-	 * Obtem a lista de arquivos enviados pelo Request.
-	 * 
+	 * Obtains the list of files sent through the Request.
+	 *
 	 * @param req
 	 * @return
 	 */
@@ -50,15 +54,14 @@ public class RequestUpload {
 		try {
 			formItems = upload.parseRequest(_request);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error("Failed to parse multipart request", e);
 		}
 		return formItems;
 	}
-	
+
 	/**
-	 * Obtem um determinado arquivo construido com base nos arquivos enviados pelo
-	 * Upload.
-	 * 
+	 * Obtains a given file built based on the files sent through the upload.
+	 *
 	 * @param fileList
 	 * @return
 	 */
@@ -79,9 +82,9 @@ public class RequestUpload {
 				}
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			LOGGER.error("Failed to write uploaded file", ex);
 		}
 		return uploadedFile;
 	}
-	
+
 }

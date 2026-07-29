@@ -12,67 +12,66 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class CryptoTest {
-	private Crypto _crypto;
-	
+	private Crypto crypto;
+
 	@Before
 	public void setUp() throws Exception{
-		_crypto = new Crypto();
+		crypto = new Crypto();
 	}
-	
+
 	private String getPrivateKey(){
 		try {
-			return _crypto.getPrivateKey();
+			return crypto.getPrivateKey();
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (InvalidKeyException e) {			
-			e.printStackTrace();
-		} catch (IllegalBlockSizeException e) {			
-			e.printStackTrace();
-		} catch (BadPaddingException e) {			
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {			
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	@Test
-	public void testeKeyGenerator(){
-		
-		try {
-			String key = _crypto.getPrivateKey();
-			
-			Assert.assertTrue(key != null);
-			
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		} catch (InvalidKeyException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		} catch (IllegalBlockSizeException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		} catch (BadPaddingException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
-	
+
 	@Test
-	public void testeEncrypt(){
-		String strKey = getPrivateKey();
-		String message = "001DALAM DISTRIBUIDORA DE FERRO E ACO LTDADALAMRUA IPEUVASAO PAULODALAMSP14819738411310142626000196378199331125019791";
-		String strDecript = null;
-		String msgCript = null;
-		
+	public void shouldGenerateKey(){
+
 		try {
-			msgCript = _crypto.doEncript(strKey, message);
-			
-			strDecript = _crypto.doDecript(strKey, msgCript);
-		} catch (CryptoException e) {
-			e.printStackTrace();
+			String key = crypto.getPrivateKey();
+
+			Assert.assertTrue(key != null);
+
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(e);
+		} catch (InvalidKeyException e) {
+			throw new RuntimeException(e);
+		} catch (IllegalBlockSizeException e) {
+			throw new RuntimeException(e);
+		} catch (BadPaddingException e) {
+			throw new RuntimeException(e);
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
 		}
-		
-		Assert.assertEquals(message, strDecript);
+	}
+
+	@Test
+	public void shouldEncryptAndDecrypt(){
+		String key = getPrivateKey();
+		String message = "001DALAM DISTRIBUIDORA DE FERRO E ACO LTDADALAMRUA IPEUVASAO PAULODALAMSP14819738411310142626000196378199331125019791";
+		String decrypted = null;
+		String encrypted = null;
+
+		try {
+			encrypted = crypto.doEncrypt(key, message);
+
+			decrypted = crypto.doDecrypt(key, encrypted);
+		} catch (CryptoException e) {
+			throw new RuntimeException(e);
+		}
+
+		Assert.assertEquals(message, decrypted);
 	}
 
 }

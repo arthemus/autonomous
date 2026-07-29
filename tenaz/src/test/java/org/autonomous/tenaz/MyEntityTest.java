@@ -11,73 +11,73 @@ import org.autonomous.tenaz.hibernate.MyEntity;
 import org.junit.Test;
 
 /**
- * 
+ *
  * @author arthemus
  * @since 16/05/2013
  */
 public class MyEntityTest {
 
 	@Entity
-	@Table(name = "TESTE_TABLE")
-	class Teste {
+	@Table(name = "TEST_TABLE")
+	class TestEntity {
 
 		@Id
 		private Integer id;
 		@Column
-		private String nome;
+		private String name;
 
-		private Teste(Integer id, String nome) {
+		private TestEntity(Integer id, String name) {
 			this.id = id;
-			this.nome = nome;
+			this.name = name;
 		}
 
 		public Integer getId() {
 			return id;
 		}
 
-		public String getNome() {
-			return nome;
+		public String getName() {
+			return name;
 		}
 
 		public void setId(Integer id) {
 			this.id = id;
 		}
 
-		public void setNome(String nome) {
-			this.nome = nome;
+		public void setName(String name) {
+			this.name = name;
 		}
 	}
 
 	@Test
-	public void obtemUmaReferenciaAClasseVerdadeira() {
-		Object object = new Teste(2, "Arthemus");
-		assertEquals(Teste.class, object.getClass());
+	public void obtainsAReferenceToTheRealClass() {
+		Object object = new TestEntity(2, "Arthemus");
+		assertEquals(TestEntity.class, object.getClass());
 	}
 
 	@Test
-	public void verificaAClasseEmSi() {
-		Object object = new Teste(25, "Teste Valor");
+	public void checksTheClassItself() {
+		Object object = new TestEntity(25, "Test Value");
 		MyEntity entity = new MyEntity(object);
 		assertEquals(object.getClass(), entity.getRealClass());
 	}
 
 	@Test
-	public void verificaNomeDoCampoID() {
-		Object object = new Teste(5, "Teste Campo");
+	public void checksTheIdFieldName() {
+		Object object = new TestEntity(5, "Test Field");
 		MyEntity entity = new MyEntity(object);
-		assertEquals("id", entity.getCampoId());
+		assertEquals("id", entity.getIdField());
 	}
 
 	@Test
-	public void verificaValorDoCampoID() {
-		Object object = new Teste(25, "Teste Valor");
+	public void checksTheIdFieldValue() {
+		Object object = new TestEntity(25, "Test Value");
 		MyEntity entity = new MyEntity(object);
-		assertEquals(25, entity.getValueId());
+		assertEquals(25, entity.getIdValue());
 	}
 
 	@Test
-	public void obtemONomeDaTabela() {
-		assertEquals("TESTE_TABLE",
-				MyEntity.getNomeTabelaRelacional(Teste.class));
+	public void obtainsTheTableName() {
+		assertEquals("TEST_TABLE",
+				MyEntity.getRelationalTableName(TestEntity.class));
 	}
 }

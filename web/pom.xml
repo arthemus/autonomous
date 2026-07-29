@@ -13,7 +13,7 @@
 
     <artifactId>autonomous.web</artifactId>
     <packaging>jar</packaging>
-    <name>Implementacoes Web</name>
+    <name>Web Implementations</name>
 
     <dependencies>
 
@@ -31,9 +31,21 @@
         </dependency>
 
         <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
-            <version>6.0</version>
+            <groupId>javax.faces</groupId>
+            <artifactId>javax.faces-api</artifactId>
+            <version>2.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.el</groupId>
+            <artifactId>javax.el-api</artifactId>
+            <version>3.0.0</version>
             <scope>provided</scope>
         </dependency>
 

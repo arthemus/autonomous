@@ -25,8 +25,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
- * Classe utilitária para trabalhar com arquivos XML.
- * 
+ * Utility class for working with XML files.
+ *
  * @author Arthemus C. Moreira
  * @since 28/05/2013
  */
@@ -34,81 +34,81 @@ public class Xml {
 
 	private final Document document;
 
-	public Xml(final Document documento) {
-		this.document = documento;
+	public Xml(final Document document) {
+		this.document = document;
 	}
-	
-	public Xml(final InputStream arquivo) throws ParserConfigurationException, 
+
+	public Xml(final InputStream file) throws ParserConfigurationException,
 			SAXException, IOException {
-		this.document = buildDocument(arquivo);		
+		this.document = buildDocument(file);
 	}
-	
+
 	/**
-	 * Obtem uma instancia do documento Xml.
-	 * 
-	 * @return
+	 * Obtains an instance of the XML document.
+	 *
+	 * @return The XML Document object.
 	 */
 	public Document getDocument() {
 		return document;
 	}
 
 	/**
-	 * Realiza a leitura de um determinado arquivo XML.
-	 * 
-	 * @param arquivo
-	 *            Arquivo a ser lido.
-	 * @return Novo Documento com os valores do arquivo.
-	 * @throws IOException 
-	 * @throws SAXException 
-	 * @throws ParserConfigurationException 
-	 * @throws FacadeException
-	 *             Excecoes decorrentes.
+	 * Reads a given XML file.
+	 *
+	 * @param file
+	 *            The file to be read.
+	 * @return A new Document with the values from the file.
+	 * @throws IOException
+	 * @throws SAXException
+	 * @throws ParserConfigurationException
 	 */
-	private Document buildDocument(InputStream arquivo) 
+	private Document buildDocument(InputStream file)
 			throws ParserConfigurationException, SAXException, IOException {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = null;
 		try {
 			db = dbf.newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
-			throw new ParserConfigurationException("Problemas ao criar novo document!"
-					+ "\nErro: " + e.getMessage());
+			throw new ParserConfigurationException("Problems creating new document!"
+					+ "\nError: " + e.getMessage());
 		}
-		Document doc = null;		
+		Document doc = null;
 		try {
-			doc = db.parse(arquivo);
+			doc = db.parse(file);
 		} catch (SAXException e) {
-			throw new SAXException("Problemas ao ler arquivo XML!"
-					+ "\nErro: " + e.getMessage());
+			throw new SAXException("Problems reading XML file!"
+					+ "\nError: " + e.getMessage());
 		} catch (IOException e) {
-			throw new IOException("Arquivo XML não encontrado!"
-					+ "\nErro: " + e.getMessage());
-		}		
+			throw new IOException("XML file not found!"
+					+ "\nError: " + e.getMessage());
+		}
 		return doc;
 	}
 
 	/**
-	 * Obtem o valor de um nó do arquivo Xml.
-	 * 
+	 * Obtains the value of a node from the XML file.
+	 *
 	 * @param tagName
-	 * @return
+	 *            The name of the tag to retrieve.
+	 * @return The value of the tag as a string.
 	 */
-	public String getTag(final String tagName) {		
-		String valor = new String();
-		Element raiz = document.getDocumentElement();
-		NodeList noPai = raiz.getElementsByTagName(tagName);
-		if (noPai == null) return valor;
-		Element itemPai = (Element) noPai.item(0);
-		if (itemPai == null) return valor;
-		Node noFilho = itemPai.getFirstChild();
-		valor = noFilho.getNodeValue();
-		return valor;
+	public String getTag(final String tagName) {
+		String value = new String();
+		Element root = document.getDocumentElement();
+		NodeList parentNode = root.getElementsByTagName(tagName);
+		if (parentNode == null) return value;
+		Element parentItem = (Element) parentNode.item(0);
+		if (parentItem == null) return value;
+		Node childNode = parentItem.getFirstChild();
+		value = childNode.getNodeValue();
+		return value;
 	}
 
 	/**
-	 * Salva o conteudo do atributo 'Document' em um arquivo externo.
-	 * 
+	 * Saves the content of the 'Document' attribute to an external file.
+	 *
 	 * @param file
+	 *            The destination file.
 	 * @throws TransformerException
 	 * @throws IOException
 	 */
@@ -117,39 +117,39 @@ public class Xml {
 		try {
 			transformer = TransformerFactory.newInstance().newTransformer();
 		} catch (TransformerConfigurationException e) {
-			throw new TransformerConfigurationException("Problemas na configuração do arquivo!"
-					+ "\nErro: " + e.getMessage());
+			throw new TransformerConfigurationException("Problems with file configuration!"
+					+ "\nError: " + e.getMessage());
 		} catch (TransformerFactoryConfigurationError e) {
 			throw new TransformerFactoryConfigurationError(
-					"Problemas ao criar configuração do arquivo!" + "\nErro: "
+					"Problems creating file configuration!" + "\nError: "
 							+ e.getMessage());
 		}
 
 		/*
-		 * Se passado como parametro, "no", escreve o conteudo do arquivo em uma
-		 * unica linha. Se "yes", formata (Indenta) o conteudo do arquivo.
+		 * If set to "no", writes the file content on a single line.
+		 * If "yes", formats (indents) the file content.
 		 */
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 		StreamResult result = new StreamResult(new StringWriter());
-		
-		DOMSource fonte = new DOMSource(document);
+
+		DOMSource source = new DOMSource(document);
 		try {
-			transformer.transform(fonte, result);
+			transformer.transform(source, result);
 		} catch (TransformerException e) {
 			throw new TransformerException(
-					"Problemas ao transformar o conteudo do arquivo XML em Texto!"
-							+ "\nErro: " + e.getMessage());
+					"Problems transforming XML file content to text!"
+							+ "\nError: " + e.getMessage());
 		}
 
-		String conteudoXml = result.getWriter().toString();
+		String xmlContent = result.getWriter().toString();
 		try {
 			FileWriter fileWrite = new FileWriter(file);
-			fileWrite.write(conteudoXml);
+			fileWrite.write(xmlContent);
 			fileWrite.flush();
 			fileWrite.close();
 		} catch (IOException e) {
-			throw new IOException("Problemas ao criar arquivo XML!"
-					+ "\nErro: " + e.getMessage());
+			throw new IOException("Problems creating XML file!"
+					+ "\nError: " + e.getMessage());
 		}
 	}
 }

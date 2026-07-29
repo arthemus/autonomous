@@ -1,15 +1,12 @@
 package org.autonomous.tenaz.hibernate;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 import org.autonomous.tenaz.core.Persist;
 import org.autonomous.tenaz.core.PersistException;
@@ -17,87 +14,153 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.impl.SessionImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <pre>
- * Implementação de persistência de dados utilizando Hibernate. Encapsula as
- * principais ações a serem tomadas com uma entidade como pesquisa, gravação,
- * atualização e exclusão.
+ * Data persistence implementation using Hibernate. It encapsulates the main
+ * actions to be taken with an entity such as search, save, update and delete.
  * </pre>
- * 
+ *
+ * <p>
+ * This class is instance-based: it holds its own {@link SessionFactory} and
+ * {@link Session}. A shared default instance is available through
+ * {@link #getDefault()} for legacy callers that previously relied on the static
+ * factory/session (e.g. servlet filters and JSF listeners).
+ * </p>
+ *
  * @author arthemus
  * @since 26/09/2012
  * @see Persist
  */
 public final class HibernatePersist implements Persist {
 
-	private static final Logger _logger = Logger.getLogger(HibernatePersist.class.getName());
-	
-	private static SessionFactory factory;
+	private static final Logger LOGGER = LoggerFactory.getLogger(HibernatePersist.class);
 
-	private static Session session;
+	/**
+	 * Singleton holder for the shared default instance. The instance is created
+	 * lazily on first access, mirroring the previous static initialization
+	 * behavior without relying on static mutable state.
+	 */
+	private static final class Holder {
+		static final HibernatePersist DEFAULT = new HibernatePersist();
+	}
 
-	static {
+	/**
+	 * Returns the shared default instance, creating it lazily.
+	 *
+	 * @return The shared default {@code HibernatePersist} instance.
+	 */
+	public static HibernatePersist getDefault() {
+		return Holder.DEFAULT;
+	}
+
+	private SessionFactory factory;
+
+	private Session session;
+
+	/**
+	 * Creates a new instance that loads its configuration internally from
+	 * {@code hibernate.cfg.xml}, optionally overridden by a
+	 * {@code db.properties} classpath resource.
+	 */
+	public HibernatePersist() {
 		loadFactory();
 		loadSession();
 	}
 
-	public static void closeFactory() {
+	/**
+	 * Creates a new instance backed by the supplied session factory.
+	 *
+	 * @param factory
+	 *            The Hibernate session factory to use.
+	 */
+	public HibernatePersist(SessionFactory factory) {
+		this.factory = factory;
+		this.session = factory.openSession();
+	}
+
+	/**
+	 * Closes the session factory if it is still open.
+	 */
+	public void closeFactory() {
 		try {
-			if (factory != null && !factory.isClosed())
+			if (factory != null && !factory.isClosed()) {
 				factory.close();
+			}
 		} catch (Exception e) {
-			// Not need error catch when closed
+			LOGGER.debug("Ignoring error while closing the session factory", e);
 		}
 	}
 
-	public static void closeSession() {
-		SessionImpl sess = (SessionImpl) session;
+	/**
+	 * Closes the current session if it is still open.
+	 */
+	public void closeSession() {
 		try {
-			if (sess != null && !sess.isClosed())
+			if (session != null && session.isOpen()) {
 				session.close();
+			}
 		} catch (Exception e) {
-			// Not need error catch when closed
+			LOGGER.debug("Ignoring error while closing the session", e);
 		}
 	}
 
-	public static SessionFactory getFactory() {
+	/**
+	 * Returns the session factory held by this instance.
+	 *
+	 * @return The session factory.
+	 */
+	public SessionFactory getFactory() {
 		return factory;
 	}
 
-	public static Session getSession() {
-		SessionImpl sess = (SessionImpl) session;
-		if (sess == null || sess.isClosed())
+	/**
+	 * Returns the current long-lived session, reopening it when it has been
+	 * closed.
+	 *
+	 * @return An open session.
+	 */
+	public Session getSession() {
+		if (session == null || !session.isOpen()) {
 			loadSession();
+		}
 		return session;
 	}
 
-	private static void loadFactory() {
+	private void loadFactory() {
 		if (factory == null) {
 			Configuration configuration = new Configuration();
-			configuration.configure("hibernate.cfg.xml");		
-			Properties propExt = new Properties();
-			try {
-				File fileExt = new File("db.properties");
-				if (fileExt.exists()) {
-					propExt.load(new FileInputStream(fileExt));
-					configuration.setProperties(propExt);
-				}								
-			} catch (FileNotFoundException e) {				
-				_logger.info("Error: " + e.getMessage());
-			} catch (IOException e) {
-				_logger.info("Error: " + e.getMessage());
-			}			
+			configuration.configure("hibernate.cfg.xml");
+			Properties external = new Properties();
+			InputStream stream = Thread.currentThread().getContextClassLoader()
+					.getResourceAsStream("db.properties");
+			if (stream != null) {
+				try {
+					external.load(stream);
+					// Merge instead of replace so hibernate.cfg.xml defaults are
+					// preserved and only overridden by the external properties.
+					configuration.addProperties(external);
+				} catch (IOException e) {
+					LOGGER.warn("Could not read db.properties from the classpath", e);
+				} finally {
+					try {
+						stream.close();
+					} catch (IOException e) {
+						LOGGER.debug("Could not close db.properties stream", e);
+					}
+				}
+			}
 			factory = configuration.buildSessionFactory();
 		}
 	}
 
-	private static void loadSession() {
+	private void loadSession() {
 		session = factory.openSession();
 	}
-	
-	private void saveOrUpdate(List<Object> listObjectsPersist) 
+
+	private void saveOrUpdate(List<Object> listObjectsPersist)
 			throws PersistException {
 		Session sess = factory.getCurrentSession();
 		Transaction trans = sess.beginTransaction();
@@ -111,22 +174,26 @@ public final class HibernatePersist implements Persist {
 					sess.flush();
 					sess.clear();
 				}
-			}	
+			}
 			sess.flush();
 			trans.commit();
 		} catch (Exception e) {
-			if (trans != null)
+			if (trans != null) {
 				trans.rollback();
-			StringBuilder msg = new StringBuilder(e.getMessage().length() * 2);
-			msg.append("Não foi possível gravar o(s) registro(s)!");
-			msg.append("\nErro: " + e.getLocalizedMessage());
-			if (e.getCause() != null)
-				msg.append("\nSQL Erro: " + e.getCause().getMessage());
-			throw new PersistException(msg.toString());
+			}
+            StringBuilder msg = new StringBuilder();
+			msg.append("Could not save the record(s)!");
+			msg.append("\nError: ").append(e.getLocalizedMessage());
+			if (e.getCause() != null) {
+				msg.append("\nSQL Error: ").append(e.getCause().getMessage());
+			}
+			PersistException persistException = new PersistException(msg.toString());
+			persistException.initCause(e);
+			throw persistException;
 		}
 	}
-	
-	private void removeAll(List<Object> listObjectsDelete) 
+
+	private void removeAll(List<Object> listObjectsDelete)
 			throws PersistException {
 		Session sess = factory.getCurrentSession();
 		Transaction trans = sess.beginTransaction();
@@ -140,18 +207,22 @@ public final class HibernatePersist implements Persist {
 					sess.flush();
 					sess.clear();
 				}
-			}	
+			}
 			sess.flush();
 			trans.commit();
 		} catch (Exception e) {
-			if (trans != null)
+			if (trans != null) {
 				trans.rollback();
-			StringBuilder msg = new StringBuilder(e.getMessage().length() * 2);
-			msg.append("Não foi possível deletar o(s) registro(s)!");
-			msg.append("\nErro: " + e.getLocalizedMessage());
-			if (e.getCause() != null)
-				msg.append("\nSQL Erro: " + e.getCause().getMessage());
-			throw new PersistException(msg.toString());
+			}
+			StringBuilder msg = new StringBuilder();
+			msg.append("Could not delete the record(s)!");
+			msg.append("\nError: ").append(e.getLocalizedMessage());
+			if (e.getCause() != null) {
+				msg.append("\nSQL Error: ").append(e.getCause().getMessage());
+			}
+			PersistException persistException = new PersistException(msg.toString());
+			persistException.initCause(e);
+			throw persistException;
 		}
 	}
 
@@ -159,12 +230,19 @@ public final class HibernatePersist implements Persist {
 	@SuppressWarnings("unchecked")
 	public <T> T get(Class<T> reference, Object key) throws PersistException {
 		try {
-			return (T) session.load(reference, (Serializable) key);	
-		} catch (Exception e) {			
-			throw new PersistException("Problemas durante a busca ou nenhum registro encontrado."
-					+ "\nErro: " + e.getLocalizedMessage() 
-					+ "\nSQL Erro: " + e.getCause().getMessage());
-		}		
+			return (T) session.load(reference, (Serializable) key);
+		} catch (Exception e) {
+			StringBuilder msg = new StringBuilder();
+			msg.append("Problems during the search or no record found.");
+			msg.append("\nError: ").append(e.getLocalizedMessage());
+			Throwable cause = e.getCause();
+			if (cause != null) {
+				msg.append("\nSQL Error: ").append(cause.getMessage());
+			}
+			PersistException persistException = new PersistException(msg.toString());
+			persistException.initCause(e);
+			throw persistException;
+		}
 	}
 
 	@Override
@@ -173,15 +251,22 @@ public final class HibernatePersist implements Persist {
 		try {
 			return session.createCriteria(reference).list();
 		} catch (Exception e) {
-			throw new PersistException("Problemas durante a listagem ou nenhum registro encontrado."
-					+ "\nErro: " + e.getLocalizedMessage() 
-					+ "\nSQL Erro: " + e.getCause().getMessage());
-		}	
+			StringBuilder msg = new StringBuilder();
+			msg.append("Problems during the listing or no record found.");
+			msg.append("\nError: ").append(e.getLocalizedMessage());
+			Throwable cause = e.getCause();
+			if (cause != null) {
+				msg.append("\nSQL Error: ").append(cause.getMessage());
+			}
+			PersistException persistException = new PersistException(msg.toString());
+			persistException.initCause(e);
+			throw persistException;
+		}
 	}
 
 	@Override
 	public Persist save(Serializable object) throws PersistException {
-		LinkedList<Object> listObjects = new LinkedList<Object>();
+		LinkedList<Object> listObjects = new LinkedList<>();
 		listObjects.add(object);
 		this.saveOrUpdate(listObjects);
 		return this;
@@ -189,11 +274,11 @@ public final class HibernatePersist implements Persist {
 
 	@Override
 	public Persist save(Collection<?> objects) throws PersistException {
-		LinkedList<Object> listObjects = new LinkedList<Object>(objects);
+		LinkedList<Object> listObjects = new LinkedList<>(objects);
 		this.saveOrUpdate(listObjects);
 		return this;
 	}
-	
+
 	@Override
 	public Persist update(Serializable object) throws PersistException {
 		this.save(object);
@@ -205,18 +290,18 @@ public final class HibernatePersist implements Persist {
 		this.save(objects);
 		return this;
 	}
-	
+
 	@Override
 	public Persist delete(Serializable object) throws PersistException {
-		LinkedList<Object> listObjects = new LinkedList<Object>();
+		LinkedList<Object> listObjects = new LinkedList<>();
 		listObjects.add(object);
 		this.removeAll(listObjects);
 		return this;
 	}
-	
+
 	@Override
 	public Persist delete(Collection<?> objects) throws PersistException {
-		LinkedList<Object> listObjects = new LinkedList<Object>(objects);
+		LinkedList<Object> listObjects = new LinkedList<>(objects);
 		this.removeAll(listObjects);
 		return this;
 	}

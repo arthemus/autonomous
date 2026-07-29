@@ -1,0 +1,72 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# Top-most EditorConfig file
+root = true
+
+# Default settings
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+# Java files
+[*.java]
+indent_style = space
+indent_size = 4
+max_line_length = 120
+insert_final_newline = true
+
+# XML files (e.g., Maven POMs, Spring configs)
+[*.xml]
+indent_style = space
+indent_size = 2
+max_line_length = off
+
+# JSON files (e.g., config files)
+[*.json]
+indent_style = space
+indent_size = 2
+
+# YAML files (e.g., application.yml)
+[*.yml]
+indent_style = space
+indent_size = 2
+
+# Markdown files
+[*.md]
+trim_trailing_whitespace = false
+insert_final_newline = true
+
+# Properties files (e.g., application.properties)
+[*.properties]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+
+# JavaScript files (AngularJS)
+[*.js]
+indent_style = space
+indent_size = 2
+max_line_length = 100
+
+# HTML files (Angular templates)
+[*.html]
+indent_style = space
+indent_size = 2
+
+# CSS/SCSS files
+[*.css]
+indent_style = space
+indent_size = 2
+
+[*.scss]
+indent_style = space
+indent_size = 2
+
+# Shell scripts
+[*.sh]
+end_of_line = lf
+insert_final_newline = true

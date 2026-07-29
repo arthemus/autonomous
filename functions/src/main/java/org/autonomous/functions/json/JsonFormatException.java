@@ -1,9 +1,8 @@
 package org.autonomous.functions.json;
 
 /**
+ * Standard exception for operations with JSON files.
  *
- * Exceção padrão para operações com arquivos json.
- * 
  * @author arthemus
  * @since 03/10/2013
  */

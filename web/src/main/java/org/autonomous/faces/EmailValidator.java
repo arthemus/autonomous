@@ -13,7 +13,7 @@ import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 
 /**
- * 
+ *
  * @author arthemus
  *
  */
@@ -31,8 +31,8 @@ public class EmailValidator implements Validator {
 		Pattern pattern = Pattern.compile(EMAIL_PATTERN);
 		Matcher matcher = pattern.matcher(email);
 		if (!matcher.matches()) {
-			FacesMessage msg = new FacesMessage("Validação",
-					"O e-mail informado não esta em um formato válido.");
+			FacesMessage msg = new FacesMessage("Validation",
+					"The informed e-mail is not in a valid format.");
 			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 			throw new ValidatorException(msg);
 		}

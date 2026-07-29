@@ -12,8 +12,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
- * Módulo de configuração para as classes injetadas pelo Guice.
- * 
+ * Configuration module for the classes injected by Guice.
+ *
  * @author arthemus
  * @since 20/08/2013
  */
@@ -23,12 +23,16 @@ public class PersistenceModule extends AbstractModule implements Serializable {
 
 	@Override
 	protected void configure() {
+		// Share the default HibernatePersist singleton so every consumer uses
+		// the same SessionFactory.
+		bind(HibernatePersist.class).toInstance(HibernatePersist.getDefault());
 		bind(Persist.class).to(HibernatePersist.class);
 		bind(HibernateSearch.class).to(NamedHibernateSearch.class);
 	}
 
-	@Provides Session provideSession() {
-		SessionFactory factory = HibernatePersist.getFactory();
+	@Provides
+	Session provideSession(HibernatePersist persist) {
+		SessionFactory factory = persist.getFactory();
 		Session session = factory.openSession();
 		return session;
 	}

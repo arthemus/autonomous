@@ -1,8 +1,8 @@
 package org.autonomous.functions;
 
 /**
- * Exceções durante a conversão de arquivos com a classe Stream.
- * 
+ * Exceptions during file conversion with the Stream class.
+ *
  * @author arthemus
  * @since 20/12/2013
  */

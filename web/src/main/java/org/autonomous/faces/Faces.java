@@ -19,163 +19,165 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
 /**
- * Classe para centralizar utilitários comuns para uso do JSF.
- * 
+ * Class to centralize common utilities for working with JSF.
+ *
  * @author arthemus
  * @since 26/09/2012
  */
 public final class Faces {
 
 	/**
-	 * Diretorio raiz da aplicacao.
+	 * Lazily-computed root directory of the application. The value is resolved
+	 * on first access through {@link #getFacesContextPath()} so that this class
+	 * can be loaded outside a JSF request without throwing
+	 * {@link ExceptionInInitializerError}.
 	 */
-	public static final String FACES_CONTEXT_PATH = Faces.getRealPath();
+	private static String facesContextPath;
 
 	private static final String FILE_DOWNLOAD = "attachment";
-	
+
 	private static final String FILE_OPEN = "inline";
-	
+
 	/**
-	 * Adiciona uma mensagem de erro no contexto da aplicacao para ser exibida
-	 * em um determinado componente da tela.
-	 * 
+	 * Adds an error message to the application context to be displayed on a
+	 * given screen component.
+	 *
 	 * @author arthemus
 	 * @param message
-	 *            Mensagem a ser exibida.
+	 *            Message to be displayed.
 	 * @param target
-	 *            Formulario de destino.
+	 *            Target form.
 	 */
 	public static final void addMessageError(String message, String target) {
-		throwMessageContext(message, target, "Erro", FacesMessage.SEVERITY_ERROR);		
+		throwMessageContext(message, target, "Error", FacesMessage.SEVERITY_ERROR);
 	}
-	
+
 	/**
-	 * Adiciona uma mensagem de erro no contexto da aplicação contendo uma
-	 * determinada mensagem, sumario e para um determinado componente.
-	 * 
+	 * Adds an error message to the application context containing a given
+	 * message, summary and target component.
+	 *
 	 * @author arthemus
 	 * @param message
-	 *            Mensagem a ser exibida.
+	 *            Message to be displayed.
 	 * @param target
-	 *            Formulário de destino.
+	 *            Target form.
 	 * @param detail
-	 *            Resumo da mensagem, referência.
+	 *            Message summary, reference.
 	 */
 	public static final void addMessageError(String message, String target, String detail) {
-		throwMessageContext(message, target, detail, FacesMessage.SEVERITY_ERROR);		
+		throwMessageContext(message, target, detail, FacesMessage.SEVERITY_ERROR);
 	}
 
 	/**
-	 * Adiciona uma mensagem de informacao no contexto da aplicacao para ser
-	 * exibida em um determinado componente da tela.
-	 * 
+	 * Adds an information message to the application context to be displayed on
+	 * a given screen component.
+	 *
 	 * @author arthemus
 	 * @param message
-	 *            Mensagem a ser exibida.
+	 *            Message to be displayed.
 	 * @param target
-	 *            Componente de destino.
+	 *            Target component.
 	 */
 	public static final void addMessageInfo(String message, String target) {
-		throwMessageContext(message, target, "Informação", FacesMessage.SEVERITY_INFO);		
+		throwMessageContext(message, target, "Information", FacesMessage.SEVERITY_INFO);
 	}
 
 	/**
-	 * Adiciona uma mensagem de informação no contexto da aplicação contendo uma
-	 * determinada mensagem, sumario e para um determinado componente.
-	 * 
+	 * Adds an information message to the application context containing a given
+	 * message, summary and target component.
+	 *
 	 * @author arthemus
 	 * @param message
-	 *            Mensagem a ser exibida.
+	 *            Message to be displayed.
 	 * @param target
-	 *            Formulário de destino.
+	 *            Target form.
 	 * @param detail
-	 *            Resumo da mensagem, referência.
+	 *            Message summary, reference.
 	 */
 	public static final void addMessageInfo(String message, String target, String detail) {
-		throwMessageContext(message, target, detail, FacesMessage.SEVERITY_INFO);		
+		throwMessageContext(message, target, detail, FacesMessage.SEVERITY_INFO);
 	}
 
 	/**
-	 * Realiza o download de um determinado arquivo com base no Request e 
-	 * Response correntes do FacesContext.
-	 * 
-	 * Exclusivo para páginas JSF.
-	 * 
+	 * Downloads a given file based on the current Request and Response of the
+	 * FacesContext.
+	 *
+	 * Exclusive for JSF pages.
+	 *
 	 * @param file
 	 * @throws IOException
 	 */
-	public static final void doDownloader(File file) throws IOException {		
-		HttpServletResponse response = (HttpServletResponse) 
+	public static final void doDownloader(File file) throws IOException {
+		HttpServletResponse response = (HttpServletResponse)
 				FacesContext.getCurrentInstance().getExternalContext().getResponse();
 
-		HttpServletRequest request = (HttpServletRequest) 
+		HttpServletRequest request = (HttpServletRequest)
 				FacesContext.getCurrentInstance().getExternalContext().getRequest();
-		
+
 		Faces.doDownloader(request, response, file);
-		
-		FacesContext.getCurrentInstance().responseComplete();		
+
+		FacesContext.getCurrentInstance().responseComplete();
 	}
-	
+
 	/**
-	 * Realiza a abertura de um determinado arquivo diretamente no browser.
-	 * Deve-se verificar se o browser em questão tem suporte nativo para o 
-	 * tipo do arquivo, caso contrario, o mesmo será enviado ao browser por
-	 * Download.
-	 * 
+	 * Opens a given file directly in the browser. The browser must have native
+	 * support for the file type, otherwise the file will be sent to the browser
+	 * as a download.
+	 *
 	 * @param file
 	 * @throws IOException
 	 */
 	public static final void doOpen(File file) throws IOException {
-		HttpServletResponse response = (HttpServletResponse) 
+		HttpServletResponse response = (HttpServletResponse)
 				FacesContext.getCurrentInstance().getExternalContext().getResponse();
 
-		HttpServletRequest request = (HttpServletRequest) 
+		HttpServletRequest request = (HttpServletRequest)
 				FacesContext.getCurrentInstance().getExternalContext().getRequest();
-		
+
 		doOperationFile(request, response, file, FILE_OPEN);
-		
+
 		FacesContext.getCurrentInstance().responseComplete();
 	}
-	
+
 	/**
-	 * Realiza o download de um determinado arquivo.
-	 * 
-	 * Funciona tanto com páginas JSF quanto para páginas JSP utilizando Servlet. 
-	 * 
+	 * Downloads a given file.
+	 *
+	 * Works for both JSF pages and JSP pages using Servlets.
+	 *
 	 * @param request
 	 * @param response
 	 * @param file
 	 * @throws IOException
 	 */
-	public static final void doDownloader(HttpServletRequest request, 
+	public static final void doDownloader(HttpServletRequest request,
 			HttpServletResponse response, File file) throws IOException {
 		doOperationFile(request, response, file, FILE_DOWNLOAD);
 	}
-	
+
 	/**
-	 * Realiza uma determinada operação com um arquivo.
-	 * 
+	 * Performs a given operation with a file.
+	 *
 	 * @param request
 	 * @param response
 	 * @param file
 	 * @param contentDisposition
-	 *            Operação, pode ser um download ou uma abertura direta.
+	 *            Operation, either a download or a direct opening.
 	 * @throws IOException
 	 */
-	private static final void doOperationFile(HttpServletRequest request, 
-			HttpServletResponse response, File file, String contentDisposition) 
+	private static final void doOperationFile(HttpServletRequest request,
+			HttpServletResponse response, File file, String contentDisposition)
 					throws IOException {
 		try {
-			response.setHeader("Content-Disposition", 
+			response.setHeader("Content-Disposition",
 					contentDisposition + "; filename=\"" + file.getName() + "\"");
-			response.setContentLength((int) file.length());			
-			
+			response.setContentLength((int) file.length());
+
 			FileInputStream input = new FileInputStream(file);
 			ServletOutputStream out = response.getOutputStream();
-			
-			byte[] buffer = new byte[Byte.MAX_VALUE];			
-			int i;			
-			
+
+			byte[] buffer = new byte[Byte.MAX_VALUE];
+			int i;
+
 			try {
 				while ((i = input.read(buffer)) != -1)
 					out.write(buffer, 0, i);
@@ -183,17 +185,17 @@ public final class Faces {
 				out.flush();
 				out.close();
 			}
-			
+
 			input.close();
-			
+
 		} catch (Exception e) {
-			throw new IOException("Erro ao processar arquivo: " + e.getMessage());
+			throw new IOException("Error processing file: " + e.getMessage());
 		}
 	}
 
 	/**
-	 * Para obter o context atual.
-	 * 
+	 * Obtains the current external context.
+	 *
 	 * @return
 	 */
 	private static ExternalContext externalContext() {
@@ -203,18 +205,18 @@ public final class Faces {
 	}
 
 	/**
-	 * Obtem o contexto atual da aplicação.
-	 * 
+	 * Obtains the current application context.
+	 *
 	 * @author arthemus
-	 * @return Contexto atual.
+	 * @return Current context.
 	 */
-	public static ExternalContext getExternaContext() {
+	public static ExternalContext getExternalContext() {
 		return FacesContext.getCurrentInstance().getExternalContext();
 	}
 
 	/**
-	 * Obtem o login do usuário logado.
-	 * 
+	 * Obtains the login of the logged-in user.
+	 *
 	 * @author arthemus
 	 * @return Login.
 	 */
@@ -224,12 +226,12 @@ public final class Faces {
 	}
 
 	/**
-	 * Obtem um determinado objeto da Sessão atual.
-	 * 
+	 * Obtains a given object from the current session.
+	 *
 	 * @author arthemus
 	 * @param objectName
-	 *            Nome do objeto desejado.
-	 * @return Objeto da sessão.
+	 *            Name of the desired object.
+	 * @return Session object.
 	 */
 	public static Object getObjectSession(String objectName) {
 		ExternalContext external = externalContext();
@@ -238,10 +240,10 @@ public final class Faces {
 	}
 
 	/**
-	 * Obtem o contexto da aplicacao.
-	 * 
+	 * Obtains the application context.
+	 *
 	 * @author arthemus
-	 * @return Contexto raiz.
+	 * @return Root context.
 	 */
 	private static String getRealPath() {
 		FacesContext aFacesContext = FacesContext.getCurrentInstance();
@@ -249,59 +251,80 @@ public final class Faces {
 		String realPath = context.getRealPath("/");
 		return realPath;
 	}
-	
+
 	/**
-	 * Obtem a sessão Http atual.
-	 * 
+	 * Lazily resolves and returns the root directory of the application. The
+	 * value is computed on first access and cached, allowing this class to be
+	 * loaded outside a JSF request without throwing
+	 * {@link ExceptionInInitializerError}.
+	 *
 	 * @author arthemus
-	 * @return Sessão atual.
+	 * @return Root context path.
+	 */
+	public static String getFacesContextPath() {
+		if (facesContextPath == null) {
+			facesContextPath = Faces.getRealPath();
+		}
+		return facesContextPath;
+	}
+
+	/**
+	 * Obtains the current Http session.
+	 *
+	 * @author arthemus
+	 * @return Current session.
 	 */
 	public static HttpSession getSession() {
 		ExternalContext external = externalContext();
 		HttpSession session = (HttpSession) external.getSession(true);
 		return session;
 	}
-	
+
 	/**
-	 * Direciona a aplicacao para um determinado ponto. Util para obter a
-	 * localizacao exata de arquivos externos em determinados diretorios do
-	 * sistema.
-	 * 
+	 * Routes the application to a given point. Useful to obtain the exact
+	 * location of external files in specific directories of the system.
+	 *
 	 * @author arthemus
 	 * @param path
-	 *            Diretorio ou arquivo de destino.
-	 * @return Caminho completo desde a raiz da aplicacao ate o destino
-	 *         expecificado.
+	 *            Target directory or file.
+	 * @return Full path from the application root to the specified target.
 	 */
 	public static String goTo(String path) {
-		StringBuilder str = new StringBuilder(FACES_CONTEXT_PATH.length() * 2);
-		str.append(FACES_CONTEXT_PATH);
+		String contextPath = Faces.getFacesContextPath();
+		StringBuilder str = new StringBuilder(contextPath.length() * 2);
+		str.append(contextPath);
 		str.append("WEB-INF");
 		str.append("/");
 		str.append(path);
 		return str.toString();
 	}
-	
+
 	/**
-	 * Guarda um determinado objeto na sessão atual.
-	 * 
+	 * Stores a given object in the current session.
+	 *
 	 * @author arthemus
-	 * @param name Nome do objeto para futura busca.
-	 * @param value Objeto em questão.
+	 * @param name
+	 *            Name of the object for later lookup.
+	 * @param value
+	 *            Object in question.
 	 */
 	public static final void saveInSession(final String name, final Object value) {
 		ExternalContext external = externalContext();
 		HttpSession session = (HttpSession) external.getSession(true);
 		session.setAttribute(name, value);
 	}
-	
+
 	/**
-	 * Sobe uma message no contexto atual da aplicação.
-	 * 
-	 * @param message Mensagem a ser enviada.
-	 * @param target ID do componente à receber a mensagem.
-	 * @param detail Detalhe da mensagem.
-	 * @param severity Tipo, Informação, Erro, Atenção...
+	 * Raises a message in the current application context.
+	 *
+	 * @param message
+	 *            Message to be sent.
+	 * @param target
+	 *            ID of the component to receive the message.
+	 * @param detail
+	 *            Message detail.
+	 * @param severity
+	 *            Type: Information, Error, Warning...
 	 */
 	private static final void throwMessageContext(String message, String target, String detail, Severity severity) {
 		FacesMessage faceMsg = new FacesMessage();
@@ -310,84 +333,87 @@ public final class Faces {
 		faceMsg.setDetail(message);
 		FacesContext.getCurrentInstance().addMessage(target, faceMsg);
 	}
-	
+
 	/**
-	 * Obtem o nome do arquivo informado para upload.
-	 * 
-	 * @param file Geralmente, um arquivo informado em campo upload.
-	 * @return Nome do arquivo.
+	 * Obtains the name of the file provided for upload.
+	 *
+	 * @param file
+	 *            Usually a file provided in an upload field.
+	 * @return File name.
 	 */
 	public static String getName(final Part file) {
 		String[] content = file.getHeader("content-disposition").split(";");
 		for (String part : content) {
 			if (part.trim().startsWith("filename")) {
 				String filename = part.substring(part.indexOf("=") + 1).trim().replace("\"", "");
-				return filename.substring(filename.lastIndexOf('/') + 1).substring(filename.lastIndexOf('\\') + 1);
+				int lastSlash = Math.max(filename.lastIndexOf('/'), filename.lastIndexOf('\\'));
+				return lastSlash >= 0 ? filename.substring(lastSlash + 1) : filename;
 			}
 		}
-		return new String("[Não foi possível obter o nome do Arquivo]");
+		return new String("[Could not obtain the file name]");
 	}
-	
+
 	/**
-	 * Para obter o conteudo do arquivo.
-	 * Funciona melhor para arquivos no formato texto como xml, jsons ou txt.
-	 * Em caso de arquivos de imagem, docs ou pdf, o retorno pode conter diversos
-	 * caracteres especiais (linguagem de maquina).
-	 * 
-	 * @param file Geralmente, um arquivo informado em campo RequestUpload.
-	 * @return Conteudo do arquivo no formato texto.
-	 * @throws IOException Caso o arquivo não possa ser lido.
+	 * Obtains the content of the file. Works best for text-format files such as
+	 * xml, json or txt. For image, document or pdf files, the return may
+	 * contain several special characters (machine language).
+	 *
+	 * @param file
+	 *            Usually a file provided in a RequestUpload field.
+	 * @return File content in text format.
+	 * @throws IOException
+	 *             If the file cannot be read.
 	 */
 	public static String getContent(final Part file) throws IOException {
 		try {
 			return new Scanner(file.getInputStream()).useDelimiter("\\A").next();
 		} catch (IOException e) {
-			throw new IOException("Não foi possível ler o Arquivo.\nErro: " + e.getMessage());
-		}		
+			throw new IOException("Could not read the file.\nError: " + e.getMessage());
+		}
 	}
 
 	/**
-	 * Obtem o número IP do servidor onde a aplicação está sendo executada.
-	 * 
+	 * Obtains the IP number of the client making the current request.
+	 *
 	 * @return
 	 */
-	public static String getServerIP() {
+	public static String getClientIP() {
 		FacesContext context = FacesContext.getCurrentInstance();
-        HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
-        return request.getRemoteAddr().trim();
+		HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
+		return request.getRemoteAddr().trim();
 	}
 
 	/**
 	 * i18n
-	 * 
-	 * Obtem uma mensagem dos arquivos de internacionalização.
-	 * 
-	 * @deprecated Utilize a interface {@code Message18n} com a implementação {@code FacesMessage18n}.
-	 * @param propriedade
+	 *
+	 * Obtains a message from the internationalization files.
+	 *
+	 * @deprecated Use the {@code Messages} interface with the {@code FacesMessages} implementation.
+	 * @param property
 	 * @return
 	 */
 	@Deprecated
-	public static String getMessage(String propriedade) {
+	public static String getMessage(String property) {
 		FacesContext context = FacesContext.getCurrentInstance();
 		ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
-		return bundle.getString(propriedade);
+		return bundle.getString(property);
 	}
-	
+
 	/**
 	 * i18n
-	 * 
-	 * Obtem uma mensagem dos arquivos de internacionalização com parametros.
-	 * 
-	 * @deprecated Utilize a interface {@code Message18n} com a implementação {@code FacesMessage18n}.
-	 * @param propriedade
-	 * @param parametros
+	 *
+	 * Obtains a message from the internationalization files with parameters.
+	 *
+	 * @deprecated Use the {@code Messages} interface with the {@code FacesMessages} implementation.
+	 * @param property
+	 * @param parameters
 	 * @return
 	 */
 	@Deprecated
-	public static String getMessage(String propriedade, Object... parametros) {
-		String message = Faces.getMessage(propriedade);
+	public static String getMessage(String property, Object... parameters) {
+		String message = Faces.getMessage(property);
 		MessageFormat formatter = new MessageFormat(message);
-		return formatter.format(parametros);
+		return formatter.format(parameters);
 	}
-	
+
 }

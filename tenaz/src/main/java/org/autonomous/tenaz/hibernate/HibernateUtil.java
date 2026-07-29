@@ -1,43 +1,46 @@
 package org.autonomous.tenaz.hibernate;
 
-import org.autonomous.tenaz.core.SuperBanco;
-import org.autonomous.tenaz.servidores.Firebird;
-import org.autonomous.tenaz.servidores.HSQLDB;
-import org.autonomous.tenaz.servidores.MSSQLServer2005;
-import org.autonomous.tenaz.servidores.MySQL;
-import org.autonomous.tenaz.servidores.Postgre;
+import org.autonomous.tenaz.core.AbstractDatabase;
+import org.autonomous.tenaz.servers.Firebird;
+import org.autonomous.tenaz.servers.HSQLDB;
+import org.autonomous.tenaz.servers.MSSQLServer;
+import org.autonomous.tenaz.servers.MySQL;
+import org.autonomous.tenaz.servers.PostgreSQL;
 
 /**
- * Classe utilitária para o framework Hibernate.
- * 
+ * Utility class for the Hibernate framework.
+ *
  * @author arthemus
  * @since 22/04/2014
  */
 public class HibernateUtil {
 
 	/**
-	 * Retorna o dialéto correto de acordo com o banco de dados utilizado.
-	 * 
-	 * Os dialétos descritos são de acordo com a versão 3.6.10 do Hibernate.
-	 * 
-	 * @param banco
-	 * @return
+	 * Returns the correct dialect according to the database being used.
+	 *
+	 * The described dialects correspond to Hibernate version 3.6.10.
+	 *
+	 * @param database
+	 *            The database descriptor.
+	 * @return The Hibernate dialect class name, or {@code null} when no dialect
+	 *         matches the database.
 	 */
-	public static String getDialect(SuperBanco banco) {
+	public static String getDialect(AbstractDatabase database) {
 		String hibernateDialect = null;
-		if (banco instanceof Firebird) {
+		if (database instanceof Firebird) {
 			hibernateDialect = "org.hibernate.dialect.FirebirdDialect";
-		} else if (banco instanceof MySQL) {
+		} else if (database instanceof MySQL) {
 			hibernateDialect = "org.hibernate.dialect.MySQLInnoDBDialect";
-		} else if (banco instanceof MSSQLServer2005) {
+		} else if (database instanceof MSSQLServer) {
 			hibernateDialect = "org.hibernate.dialect.SQLServer2005Dialect";
-		} else if (banco instanceof HSQLDB) {
+		} else if (database instanceof HSQLDB) {
 			hibernateDialect = "org.hibernate.dialect.HSQLDialect";
-		} else if (banco instanceof Postgre) {
+		} else if (database instanceof PostgreSQL) {
 			hibernateDialect = "org.hibernate.dialect.PostgreSQLDialect";
 		}
-		if (hibernateDialect == null)
-			new RuntimeException("Banco de dados não definido para obter seu dialéto pelo Hibernate.");
+		if (hibernateDialect == null) {
+			throw new RuntimeException("Database not defined to obtain its Hibernate dialect.");
+		}
 		return hibernateDialect;
 	}
 }

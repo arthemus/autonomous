@@ -2,8 +2,8 @@ package org.autonomous.tenaz.commons;
 
 
 /**
- * Exceções decorrentes da utilização de uma classe de cadastro.
- * 
+ * Exceptions arising from the use of a registration class.
+ *
  * @author arthemus
  * @since 06/11/2013
  */
@@ -16,15 +16,15 @@ public class CrudException extends Exception {
 	}
 
 	public CrudException(String message) {
-		super(message);		
+		super(message);
 	}
 
 	public CrudException(Throwable cause) {
-		super(cause);		
+		super(cause);
 	}
 
 	public CrudException(String message, Throwable cause) {
-		super(message, cause);		
+		super(message, cause);
 	}
 
 }

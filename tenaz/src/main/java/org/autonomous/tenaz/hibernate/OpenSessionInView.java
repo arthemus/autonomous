@@ -11,39 +11,42 @@ import javax.servlet.ServletResponse;
 
 /**
  * <pre>
- * Essa classe tem a função de implementar um Designe de controle das Sessões do
- * Hibernate, eliminando a necessidade do mesmo controle em cada classe de negócio.
- * 
- * A Sessão será 'Aberta' e 'Fechada' a cada chamada à uma página JSF.
- * 
- * {@link https://community.jboss.org/wiki/OpenSessioninView?_sscc=t}
+ * This class implements a control design for Hibernate sessions, removing the
+ * need for the same control in every business class.
+ *
+ * The session will be 'opened' and 'closed' on each call to a JSF page.
  * </pre>
- * 
+ *
  * @author arthemus
  * @since 07/11/2012
- * 
+ *
  */
 public class OpenSessionInView implements Filter {
 
+	private HibernatePersist persist;
+
 	@Override
 	public void destroy() {
-		HibernatePersist.closeFactory();
+		if (persist != null) {
+			persist.closeFactory();
+		}
 	}
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
 
-		HibernatePersist.getSession();
+		persist.getSession();
 		try {
 			chain.doFilter(request, response);
 		} finally {
-			HibernatePersist.closeSession();
+			persist.closeSession();
 		}
 	}
 
 	@Override
 	public void init(FilterConfig filter) throws ServletException {
-		HibernatePersist.getFactory();
+		persist = HibernatePersist.getDefault();
+		persist.getFactory();
 	}
 }

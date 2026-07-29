@@ -4,85 +4,102 @@ import java.io.Serializable;
 import java.util.Collection;
 
 /**
- * Interface base para objetos do tipo DAO utilizados pelo sistema,
- * provendo as funcionalidades básicas de uma persistência. 
- * 
+ * Base interface for DAO-like objects used by the system, providing the basic
+ * features of a persistence layer.
+ *
  * @author arthemus
  * @since 26/09/2012
  */
 public interface Persist {
 
 	/**
-	 * Obtem a entidade do banco de dados.
-	 * 
+	 * Obtains the entity from the database.
+	 *
 	 * @param classReference
+	 *            The entity class reference.
 	 * @param key
-	 * @return
+	 *            The primary key value.
+	 * @return The located entity.
 	 * @throws PersistException
+	 *             If the read operation fails.
 	 */
 	<T> T get(final Class<T> classReference, Object key) throws PersistException;
 
 	/**
-	 * Obtem uma lista com 'todos' os registro da entidade no banco de dados.
-	 * 
+	 * Obtains a list with 'all' records of the entity in the database.
+	 *
 	 * @param classReference
-	 * @return
+	 *            The entity class reference.
+	 * @return All records of the entity.
 	 * @throws PersistException
+	 *             If the list operation fails.
 	 */
 	<T> Collection<T> list(final Class<T> classReference) throws PersistException;
 
 	/**
-	 * Realiza a gravação do registro no banco de dados.
-	 * 
+	 * Saves the record in the database.
+	 *
 	 * @param object
-	 * @return
+	 *            The entity to be saved.
+	 * @return This persist instance, for chaining.
 	 * @throws PersistException
+	 *             If the save operation fails.
 	 */
 	Persist save(final Serializable object) throws PersistException;
 
 	/**
-	 * Realiza a gravação de vários registros no banco de dados.
-	 * 
+	 * Saves several records in the database.
+	 *
 	 * @param objects
-	 * @return
+	 *            The entities to be saved.
+	 * @return This persist instance, for chaining.
 	 * @throws PersistException
+	 *             If the save operation fails.
 	 */
 	Persist save(final Collection<?> objects) throws PersistException;
 
 	/**
-	 * Atualiza um unico registro no banco de dados.
-	 * 
+	 * Updates a single record in the database.
+	 *
 	 * @param object
-	 * @return
+	 *            The entity to be updated.
+	 * @return This persist instance, for chaining.
 	 * @throws PersistException
+	 *             If the update operation fails.
 	 */
 	Persist update(final Serializable object) throws PersistException;
 
 	/**
-	 * Atualiza vários registros no banco de dados.
-	 *  
+	 * Updates several records in the database.
+	 *
 	 * @param objects
-	 * @return
+	 *            The entities to be updated.
+	 * @return This persist instance, for chaining.
 	 * @throws PersistException
+	 *             If the update operation fails.
 	 */
 	Persist update(final Collection<?> objects) throws PersistException;
 
 	/**
-	 * Remove um unico registro do banco de dados.
-	 * 
+	 * Removes a single record from the database.
+	 *
 	 * @param object
-	 * @return
+	 *            The entity to be removed.
+	 * @return This persist instance, for chaining.
 	 * @throws PersistException
+	 *             If the delete operation fails.
 	 */
 	Persist delete(final Serializable object) throws PersistException;
 
 	/**
-	 * Remove vários registros do banco de dados.
-	 * 
+	 * Removes several records from the database.
+	 *
 	 * @param objects
-	 * @return
+	 *            The entities to be removed.
+	 * @return This persist instance, for chaining.
 	 * @throws PersistException
+	 *             If the delete operation fails.
 	 */
 	Persist delete(final Collection<?> objects) throws PersistException;
-	
+
 }

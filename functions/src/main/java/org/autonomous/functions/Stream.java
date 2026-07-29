@@ -9,59 +9,63 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Classe para conversão de arquivos para uma sequencia hexadecimal
- * da Base 64, ideal para guardar arquivos no banco de dados.
- * 
+ * Class for converting files to a Base64 hexadecimal sequence, ideal for
+ * storing files in the database.
+ *
  * @author arthemus
  * @since 20/12/2013
  */
 public class Stream {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(Stream.class);
+
 	/**
-	 * 
-	 * Obtem um hash Base64 a partir de um imput stream.
-	 * 
+	 * Obtains a Base64 hash from an input stream.
+	 *
 	 * @param inputStream
-	 * @return String hexadecimal
-	 * @throws StreamException 
+	 *            The input stream to convert.
+	 * @return The Base64-encoded string.
+	 * @throws StreamException
 	 */
-	public static String getBase64(final InputStream inputStream) 
+	public static String getBase64(final InputStream inputStream)
 			throws StreamException {
 
 		if (inputStream == null)
-			throw new StreamException("O arquivo não foi encontrado ou não está acessivel, verifique.");
+			throw new StreamException("The file was not found or is not accessible, please verify.");
 
 		String stringStream = null;
-		
+
 		try {
-			ArrayList<Integer> listaBytes = new ArrayList<Integer>();
-			
-			Integer proximoByte = inputStream.read();
-			while (proximoByte != -1) {
-				listaBytes.add(proximoByte);
-				proximoByte = inputStream.read();
+			ArrayList<Integer> byteList = new ArrayList<Integer>();
+
+			Integer nextByte = inputStream.read();
+			while (nextByte != -1) {
+				byteList.add(nextByte);
+				nextByte = inputStream.read();
 			}
-			
-			byte[] bytes = new byte[listaBytes.size()];
+
+			byte[] bytes = new byte[byteList.size()];
 			int i = 0;
-			for (Integer lstByte : listaBytes) {
+			for (Integer lstByte : byteList) {
 				bytes[i] = (byte) lstByte.intValue();
 				i++;
 			}
 
 			stringStream = Base64.encodeBase64String(bytes);
 
-		} catch (IOException e) {			
-			throw new StreamException("Problemas durante a leitura do arquivo:\n".concat(e.getMessage()));
+		} catch (IOException e) {
+			throw new StreamException("Problems during file reading:\n".concat(e.getMessage()));
 		} catch (Exception e) {
-			throw new StreamException("Ocorreu um erro desconhecido durante a conversão:\n".concat(e.getMessage()));
+			throw new StreamException("An unknown error occurred during conversion:\n".concat(e.getMessage()));
 		} finally {
 			try {
 				inputStream.close();
 			} catch (IOException e) {
-				// NoCommand
+				LOGGER.error("Failed to close input stream", e);
 			}
 		}
 
@@ -69,44 +73,47 @@ public class Stream {
 	}
 
 	/**
-	 * Obtem uma string Base64 a partir de um arquivo.
-	 * 
+	 * Obtains a Base64 string from a file.
+	 *
 	 * @param file
-	 * @return String hexadecimal
-	 * @throws StreamException 
+	 *            The file to convert.
+	 * @return The Base64-encoded string.
+	 * @throws StreamException
 	 */
-	public static String getBase64(final File file) throws StreamException {		
-		if (!file.exists() || !file.canRead()) new FileNotFoundException();		
+	public static String getBase64(final File file) throws StreamException {
+		if (!file.exists() || !file.canRead()) new FileNotFoundException();
 		try {
 			return getBase64(new FileInputStream(file));
-		} catch (FileNotFoundException e) {			
-			throw new StreamException("O arquivo não foi encontrado ou não está acessivel, verifique.");
+		} catch (FileNotFoundException e) {
+			throw new StreamException("The file was not found or is not accessible, please verify.");
 		}
 	}
 
 	/**
-	 * Converte uma string Base64 para seu formato original.
-	 * 
-	 * @param hashFile String hexadecimal
-	 * @param fileName Nome do arquivo
-	 * @return Arquivo original
-	 * @throws StreamException 
+	 * Converts a Base64 string back to its original file format.
+	 *
+	 * @param hashFile
+	 *            The Base64-encoded string.
+	 * @param fileName
+	 *            The name of the file.
+	 * @return The original file.
+	 * @throws StreamException
 	 */
-	public static File getFile(final String hashFile, final String fileName) 
+	public static File getFile(final String hashFile, final String fileName)
 			throws StreamException {
 		File fileReturn = new File(fileName);
 		try {
 			byte[] bytes = Base64.decodeBase64(hashFile);
-			FileOutputStream saida = new FileOutputStream(fileReturn);
-			saida.write(bytes);
-			saida.flush();
-			saida.close();
+			FileOutputStream output = new FileOutputStream(fileReturn);
+			output.write(bytes);
+			output.flush();
+			output.close();
 		} catch (FileNotFoundException e) {
-			throw new StreamException("O arquivo não foi encontrado ou não está acessivel:\n".concat(e.getMessage()));
-		} catch (IOException e) {			
-			throw new StreamException("Problemas durante a leitura do arquivo:\n".concat(e.getMessage()));
+			throw new StreamException("The file was not found or is not accessible:\n".concat(e.getMessage()));
+		} catch (IOException e) {
+			throw new StreamException("Problems during file reading:\n".concat(e.getMessage()));
 		} catch (Exception e) {
-			throw new StreamException("Ocorreu um erro desconhecido durante a conversão:\n".concat(e.getMessage()));
+			throw new StreamException("An unknown error occurred during conversion:\n".concat(e.getMessage()));
 		}
 		return fileReturn;
 	}

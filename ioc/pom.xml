@@ -13,7 +13,7 @@
 
     <artifactId>autonomous.ioc</artifactId>
     <packaging>jar</packaging>
-    <name>Injecao de Dependencia</name>
+    <name>Dependency Injection</name>
 
     <dependencies>
 

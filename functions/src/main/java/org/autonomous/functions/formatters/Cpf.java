@@ -1,15 +1,15 @@
 package org.autonomous.functions.formatters;
 
 /**
- * Marcara para um documento CPF.
- * 
+ * Mask for a CPF document.
+ *
  * @author arthemus
  * @since 28/05/2013
  */
 public final class Cpf implements Formatter {
-	
+
 	@Override
-	public String getMascara() {
+	public String getMask() {
 		return "###.###.###-##";
 	}
 

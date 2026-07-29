@@ -16,43 +16,49 @@ import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 /**
- * Classe para impressão de conteudo em projetos Web.
- * 
+ * Renders JasperReports content to PDF in web projects.
+ *
  * @author arthemus
  * @since 25/06/2013
  */
 public class WebReport {
 
-	private static FacesContext context;
-	private static HttpServletResponse response;
-	private static ServletOutputStream servletOutputStream;
-	private static InputStream inputStream;
+	private final FacesContext context;
+	private final HttpServletResponse response;
+
+	public WebReport(FacesContext context, HttpServletResponse response) {
+		this.context = context;
+		this.response = response;
+	}
+
+	public WebReport(FacesContext context) {
+		this(context, (HttpServletResponse) context.getExternalContext().getResponse());
+	}
 
 	/**
-	 * Prepara o Input e Output Stream de impressão.
-	 * 
+	 * Prepares the input and output streams for printing.
+	 *
 	 * @param classReference
 	 * @param fileReport
 	 * @throws IOException
 	 */
-	private static void prepareStream(Class<?> classReference, String fileReport) throws IOException {
-		servletOutputStream = response.getOutputStream();
-		inputStream = classReference.getResourceAsStream(fileReport);
+	private InputStream prepareStream(Class<?> classReference, String fileReport) throws IOException {
+		return classReference.getResourceAsStream(fileReport);
 	}
 
 	/**
-	 * Declara o arquivo a ser exportado.
-	 * 
+	 * Declares the file to be exported as a PDF response.
+	 *
 	 * @param pdfName
 	 */
-	private static void declareFilePdf(String pdfName) {
+	private void declarePdfFile(String pdfName) {
 		response.setHeader("Content-Disposition", "inline; filename=".concat(pdfName).concat(".pdf"));
 		response.setContentType("application/pdf");
 	}
-	
+
 	/**
-	 * Exportar relatório no formato Pdf.
-	 * 
+	 * Exports a report to PDF format using only parameters.
+	 *
 	 * @param classReference
 	 * @param fileReport
 	 * @param pdfName
@@ -60,36 +66,24 @@ public class WebReport {
 	 * @throws JRException
 	 * @throws IOException
 	 */
-	public static void printPdf(Class<?> classReference, String fileReport,
-			String pdfName, Map<String, Object> parameters) 
+	public void printPdf(Class<?> classReference, String fileReport,
+			String pdfName, Map<String, Object> parameters)
 					throws JRException, IOException {
-		
-		context = FacesContext.getCurrentInstance();
-		response = (HttpServletResponse) context.getExternalContext().getResponse();
-		
+		InputStream stream = prepareStream(classReference, fileReport);
+		declarePdfFile(pdfName);
+		ServletOutputStream outputStream = response.getOutputStream();
 		try {
-			declareFilePdf(pdfName);
-			prepareStream(classReference, fileReport);
-
-			JasperRunManager.runReportToPdfStream(inputStream, 
-					servletOutputStream, parameters);			
-
-			servletOutputStream.flush();
-			servletOutputStream.close();
-
+			JasperRunManager.runReportToPdfStream(stream, outputStream, parameters);
 		} catch (JRException e) {
-			throw new JRException("Problemas para imprimir o relatório!\nErro: " + e.getMessage());
-		} catch (IOException e) {
-			throw new IOException("O arquivo [" + fileReport + "] não foi encontrado!\nErro: " + e.getMessage());
+			throw new JRException("Failed to print report!\nError: " + e.getMessage());
 		} finally {
-			context.renderResponse();
-			context.responseComplete();
+			flushAndClose(outputStream);
 		}
 	}
-	
+
 	/**
-	 * Exportar relatório no formato Pdf.
-	 * 
+	 * Exports a report to PDF format using parameters and a collection data source.
+	 *
 	 * @param classReference
 	 * @param fileReport
 	 * @param pdfName
@@ -98,70 +92,56 @@ public class WebReport {
 	 * @throws JRException
 	 * @throws IOException
 	 */
-	public static void printPdf(Class<?> classReference, String fileReport,
+	public void printPdf(Class<?> classReference, String fileReport,
 			String pdfName, Map<String, Object> parameters,
 			Collection<?> collectionDataSource) throws JRException, IOException {
-
-		context = FacesContext.getCurrentInstance();
-		response = (HttpServletResponse) context.getExternalContext().getResponse();
-		
+		InputStream stream = prepareStream(classReference, fileReport);
+		declarePdfFile(pdfName);
+		JRDataSource jrDataSource = new JRBeanCollectionDataSource(collectionDataSource);
+		ServletOutputStream outputStream = response.getOutputStream();
 		try {
-			declareFilePdf(pdfName);
-			prepareStream(classReference, fileReport);
-
-			JRDataSource jrDataSource = new JRBeanCollectionDataSource(collectionDataSource);
-			JasperRunManager.runReportToPdfStream(inputStream, 
-					servletOutputStream, parameters, jrDataSource);
-
-			servletOutputStream.flush();
-			servletOutputStream.close();
-
+			JasperRunManager.runReportToPdfStream(stream, outputStream, parameters, jrDataSource);
 		} catch (JRException e) {
-			throw new JRException("Problemas para imprimir o relatório!\nErro: " + e.getMessage());
-		} catch (IOException e) {
-			throw new IOException("O arquivo [" + fileReport + "] não foi encontrado!\nErro: " + e.getMessage());
+			throw new JRException("Failed to print report!\nError: " + e.getMessage());
 		} finally {
-			context.renderResponse();
-			context.responseComplete();
+			flushAndClose(outputStream);
 		}
 	}
 
 	/**
-	 * Exportar relatório no formato Pdf.
-	 * 
+	 * Exports a report to PDF format using parameters and a JDBC connection.
+	 *
 	 * @param classReference
 	 * @param fileReport
 	 * @param pdfName
 	 * @param parameters
-	 * @param conexao
+	 * @param connection
 	 * @throws JRException
 	 * @throws IOException
 	 */
-	public static void printPdf(Class<?> classReference, String fileReport,
-			String pdfName, Map<String, Object> parameters, Connection conexao) 
+	public void printPdf(Class<?> classReference, String fileReport,
+			String pdfName, Map<String, Object> parameters, Connection connection)
 					throws JRException, IOException {
-		
-		context = FacesContext.getCurrentInstance();
-		response = (HttpServletResponse) context.getExternalContext().getResponse();
-		
+		InputStream stream = prepareStream(classReference, fileReport);
+		declarePdfFile(pdfName);
+		ServletOutputStream outputStream = response.getOutputStream();
 		try {
-			declareFilePdf(pdfName);
-			prepareStream(classReference, fileReport);
-
-			JasperRunManager.runReportToPdfStream(inputStream, 
-					servletOutputStream, parameters, conexao);			
-
-			servletOutputStream.flush();
-			servletOutputStream.close();
-
+			JasperRunManager.runReportToPdfStream(stream, outputStream, parameters, connection);
 		} catch (JRException e) {
-			throw new JRException("Problemas para imprimir o relatório!\nErro: " + e.getMessage());
-		} catch (IOException e) {
-			throw new IOException("O arquivo [" + fileReport + "] não foi encontrado!\nErro: " + e.getMessage());
+			throw new JRException("Failed to print report!\nError: " + e.getMessage());
 		} finally {
-			context.renderResponse();
+			flushAndClose(outputStream);
+		}
+	}
+
+	private void flushAndClose(ServletOutputStream outputStream) throws IOException {
+		try {
+			outputStream.flush();
+		} finally {
+			outputStream.close();
+		}
+		if (context != null) {
 			context.responseComplete();
 		}
 	}
-		
 }

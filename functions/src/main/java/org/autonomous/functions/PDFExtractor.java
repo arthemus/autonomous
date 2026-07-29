@@ -5,87 +5,99 @@ import java.io.InputStream;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFTextStripper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Para extrair o conteudo de um arquivo PDF.
- * 
+ * For extracting the content of a PDF file.
+ *
  * @author arthemus
  * @since 03/09/2013
  */
 public class PDFExtractor {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(PDFExtractor.class);
+
 	/**
-	 * Obtem o conteudo do arquivo PDF no formato texto.
-	 * 
+	 * Obtains the content of the PDF file in text format.
+	 *
 	 * @param file
-	 * @return
+	 *            The input stream of the PDF file.
+	 * @return The extracted text content.
 	 */
-	public String getTexto(InputStream file) {
-		String textoExtraido = null;
+	public String getText(InputStream file) {
+		String extractedText = null;
 		PDDocument pdDoc = null;
 		try {
 			pdDoc = PDDocument.load(file);
 			PDFTextStripper stripper = new PDFTextStripper();
-			textoExtraido = stripper.getText(pdDoc);
+			extractedText = stripper.getText(pdDoc);
 		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {				
-				if (pdDoc != null) pdDoc.close();
-			} catch (IOException e) {				
-			}
-		}
-		return textoExtraido;
-	}
-
-	/**
-	 * Obtem o total de paginas do arquivo.
-	 * 
-	 * @param file
-	 * @return
-	 */
-	public int getTotalPaginas(InputStream file) {
-		int numPaginas = 0;
-		PDDocument pdDoc = null;
-		try {
-			pdDoc = PDDocument.load(file);
-			numPaginas = pdDoc.getNumberOfPages();
-		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.error("Failed to extract text from PDF", e);
 		} finally {
 			try {
 				if (pdDoc != null) pdDoc.close();
-			} catch (IOException e) {			
+			} catch (IOException e) {
+				LOGGER.error("Failed to close PDF document", e);
 			}
 		}
-		return numPaginas;
+		return extractedText;
 	}
 
 	/**
-	 * Obtem o conteudo do arquivo dentro de um intervalo de páginas.
-	 * 
+	 * Obtains the total number of pages in the file.
+	 *
 	 * @param file
-	 * @param paginaInicio
-	 * @param paginaFinal
-	 * @return
+	 *            The input stream of the PDF file.
+	 * @return The total number of pages.
 	 */
-	public String getTexto(InputStream file, int paginaInicio, int paginaFinal) {
-		String textoExtraido = null;		
+	public int getTotalPages(InputStream file) {
+		int pageCount = 0;
+		PDDocument pdDoc = null;
+		try {
+			pdDoc = PDDocument.load(file);
+			pageCount = pdDoc.getNumberOfPages();
+		} catch (IOException e) {
+			LOGGER.error("Failed to get page count from PDF", e);
+		} finally {
+			try {
+				if (pdDoc != null) pdDoc.close();
+			} catch (IOException e) {
+				LOGGER.error("Failed to close PDF document", e);
+			}
+		}
+		return pageCount;
+	}
+
+	/**
+	 * Obtains the content of the file within a range of pages.
+	 *
+	 * @param file
+	 *            The input stream of the PDF file.
+	 * @param startPage
+	 *            The starting page number.
+	 * @param endPage
+	 *            The ending page number.
+	 * @return The extracted text content.
+	 */
+	public String getText(InputStream file, int startPage, int endPage) {
+		String extractedText = null;
 		PDDocument pdDoc = null;
 		try {
 			pdDoc = PDDocument.load(file);
 			PDFTextStripper stripper = new PDFTextStripper();
-			stripper.setStartPage(paginaInicio);
-			stripper.setEndPage(paginaFinal);
-			textoExtraido = stripper.getText(pdDoc);
+			stripper.setStartPage(startPage);
+			stripper.setEndPage(endPage);
+			extractedText = stripper.getText(pdDoc);
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.error("Failed to extract text from PDF page range", e);
 		} finally {
 			try {
 				if (pdDoc != null) pdDoc.close();
-			} catch (IOException e) {			
+			} catch (IOException e) {
+				LOGGER.error("Failed to close PDF document", e);
 			}
 		}
-		return textoExtraido;
+		return extractedText;
 	}
 }

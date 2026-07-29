@@ -23,19 +23,19 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 /**
- * Com esse filtro é possível obter arquivos enviados pelo Request a partir da
- * tag {@code <input type="file" />}.
- * 
- * A versão 2.1 do JSF não oferece suporte nativo a upload de arquivos externos,
- * com isso se faz necessário utilizar o framework commons-fileUpload da Apache
- * {@link http://commons.apache.org/proper/commons-fileupload/} e dessa classe
- * para conseguir obter um request do tipo multipart
- * {@code <h:form enctype="multipart/form-data">} e ler os respectivos arquivos
- * enviados com ele.
- * 
+ * With this filter it is possible to obtain files sent through the Request
+ * via the {@code <input type="file" />} tag.
+ *
+ * JSF version 2.1 does not offer native support for external file uploads,
+ * therefore it is necessary to use the Apache commons-fileUpload framework
+ * {@link http://commons.apache.org/proper/commons-fileupload/} and this class
+ * to obtain a multipart request
+ * {@code <h:form enctype="multipart/form-data">} and read the respective files
+ * sent with it.
+ *
  * @author arthemus
  * @since 21/05/2014
- * 
+ *
  */
 public class RequestMultipartFilter implements Filter {
 
@@ -128,8 +128,8 @@ public class RequestMultipartFilter implements Filter {
 	}
 
 	/**
-	 * Processa apenas componentes da tela, não arquivos enviados.
-	 * 
+	 * Processes only screen components, not uploaded files.
+	 *
 	 * @param formField
 	 * @param parameterMap
 	 */
@@ -150,9 +150,9 @@ public class RequestMultipartFilter implements Filter {
 	}
 
 	/**
-	 * Processa arquivo enviados pelo upload e os adiciona na cadeia de
-	 * atributos do request.
-	 * 
+	 * Processes files sent through the upload and adds them to the request
+	 * attribute chain.
+	 *
 	 * @param fileField
 	 * @param request
 	 */

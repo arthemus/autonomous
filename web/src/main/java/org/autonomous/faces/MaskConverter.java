@@ -7,12 +7,12 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import org.autonomous.functions.Funcoes;
+import org.autonomous.functions.Functions;
 
 /**
- * 
- * Classe para remover caracteres especiais durante a conversão de valores da página JSF.
- * 
+ *
+ * Class to remove special characters during the conversion of values from a JSF page.
+ *
  * @author arthemus
  * @since 16/10/2012
  */
@@ -20,15 +20,15 @@ import org.autonomous.functions.Funcoes;
 @ManagedBean(eager = true)
 @FacesConverter(value = "maskConverter")
 public final class MaskConverter implements Converter {
-	
+
 	@Override
 	public Object getAsObject(FacesContext context, UIComponent component, String string) {
-		return Funcoes.doRemoveCaracteres(string);
+		return Functions.removeSpecialCharacters(string);
 	}
 
 	@Override
 	public String getAsString(FacesContext context, UIComponent component, Object value) {
-		return Funcoes.doRemoveCaracteres(value.toString());
+		return Functions.removeSpecialCharacters(value.toString());
 	}
-	
+
 }
